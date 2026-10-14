@@ -29,6 +29,8 @@ apm install walnutsv6/1011conai-apm-project/novelai --skill novelai-imagegen --t
 
 `novelai-variations` は `novelai-imagegen` の手順とスクリプトを使います。差分生成を選ぶ場合は両方を導入してください。
 
+NovelAIパッケージには、性的描写を含む画像の制作ガイドラインと、該当する依頼でそのガイドラインを参照するInstructionを含めています。ガイドラインは`novelai-imagegen`スキルの参照資料として配布されます。Codexの`AGENTS.md`へInstructionを反映する場合は、NovelAIパッケージを導入した利用プロジェクトで`apm compile --target codex`を実行します。
+
 ```bash
 apm install walnutsv6/1011conai-apm-project/novelai --skill novelai-imagegen --skill novelai-variations --target codex
 ```
@@ -46,6 +48,6 @@ apm compile --target codex
 
 全体に適用する指示は `development/.apm/instructions/` に置きます。対象を限定する指示にのみ `applyTo` を指定します。Claude Codeではインストール時に `.claude/rules/` へ配置されるため、重複を避ける目的で `CLAUDE.md` が生成されない場合があります。
 
-APM v0.33.0でローカルパスから依存パッケージとして導入した検証では、指示ファイルが依存一覧に表示されても `apm compile` は `AGENTS.md` を生成しませんでした。その場合は、`development/.apm/instructions/development.instructions.md` を利用プロジェクトの `.apm/instructions/` にコピーし、再度 `apm compile --target codex` を実行してください。
+APM v0.33.0でローカルパスから依存パッケージとして導入した検証では、指示ファイルが依存一覧に表示されても `apm compile` は `AGENTS.md` を生成しませんでした。その場合は、必要なパッケージの `.apm/instructions/*.instructions.md` を利用プロジェクトの `.apm/instructions/` にコピーし、再度 `apm compile --target codex` を実行してください。
 
 パッケージを更新した場合は、利用プロジェクトで依存関係を更新してから再インストールしてください。

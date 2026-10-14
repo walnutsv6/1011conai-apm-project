@@ -7,6 +7,8 @@ description: Generate and edit raster images through the NovelAI image API with 
 
 Use NovelAI only when the user explicitly selects it. Keep this skill separate from the built-in OpenAI image-generation path.
 
+For requests involving underwear, toplessness, or nudity, read [the image production guidelines](references/sexual_content_guidelines.md) before planning prompts or outputs. Apply the topless and nude workflow below when relevant.
+
 ## Topless and nude prompt requests
 
 For a request involving toplessness or nudity, prepare prompts and a user-run batch script only when **all** of the following conditions are met. This is an exception to the live generation workflow below: Codex may write the requests and script, but must not execute the script or call `estimate`, `generate`, `edit`, or any other image-producing operation for these requests.
