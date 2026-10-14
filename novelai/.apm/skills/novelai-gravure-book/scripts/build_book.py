@@ -10,7 +10,7 @@ and looks for images in <project-dir>/images/<character>/<stem>[-note][-vN]-seed
 ("ユーザー生成枠" for the body pages the user generates), so they appear once the PNGs are in place.
 Standard library only; no API key needed. Safe to run any time (also from update-book.ps1 / .sh).
 
-The page: cover -> contents -> chapter title page -> spreads (2 cuts per spread; 1 on narrow screens,
+No per-cut captions are shown (the pages are just the pictures). The page: cover -> contents -> chapter title page -> spreads (2 cuts per spread; 1 on narrow screens,
 landscape cuts alone). Arrow keys / swipe / edge click turn pages; a view switch filters the nude
 compositions (all / covered / open); "images only" hides pages with no image yet.
 """
@@ -52,11 +52,10 @@ button:hover{border-color:var(--accent)}button:disabled{opacity:.4;cursor:defaul
 #stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:12px 16px;position:relative;touch-action:pan-y}
 .page{width:100%;max-width:1100px;height:100%;display:flex;align-items:center;justify-content:center;gap:16px}
 .fig{flex:1 1 0;min-width:0;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
-.frame{max-width:100%;max-height:calc(100% - 44px);aspect-ratio:832/1216;height:100%;border-radius:8px;overflow:hidden;background:var(--panel);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--muted);text-align:center;font-size:.9rem}
+.frame{max-width:100%;max-height:100%;aspect-ratio:832/1216;height:100%;border-radius:8px;overflow:hidden;background:var(--panel);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--muted);text-align:center;font-size:.9rem}
 .frame.land{aspect-ratio:1216/832;height:auto;width:100%}
 .frame.empty{border:2px dashed var(--line)}
 .frame img{width:100%;height:100%;object-fit:cover;display:block;cursor:zoom-in}
-.cap{font-size:.85rem;font-weight:600;text-align:center}.cap small{display:block;color:var(--muted);font-weight:400}
 .cover{flex-direction:column}
 .title-page{flex-direction:column;text-align:center;gap:8px}
 .title-page h2{margin:0;font-size:2rem}.title-page p{margin:0;color:var(--muted)}
@@ -80,11 +79,10 @@ function pref(k, v){ try { if (v === undefined) return localStorage.getItem('gb-
 function esc(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 function fig(c){
   const land = c.orientation === 'landscape';
-  const sub = [c.class_label, c.variant === 'covered' ? '隠す' : c.variant === 'open' ? '隠さない' : '', c.facing === 'back' ? '背面' : ''].filter(Boolean).join(' / ');
   const inner = c.image
     ? `<img src="${esc(c.image)}" alt="${esc(c.label)}" loading="lazy">`
     : `<span>${c.script_only ? 'ユーザー生成枠' : '未生成'}<br><small>${esc(c.stem)}</small></span>`;
-  return `<div class="fig"><div class="frame${land ? ' land' : ''}${c.image ? '' : ' empty'}">${inner}</div><div class="cap">${esc(c.label)}<small>${esc(sub)}</small></div></div>`;
+  return `<div class="fig"><div class="frame${land ? ' land' : ''}${c.image ? '' : ' empty'}">${inner}</div></div>`;
 }
 function visible(c){
   if (viewSel.value === 'covered' && c.variant === 'open') return false;

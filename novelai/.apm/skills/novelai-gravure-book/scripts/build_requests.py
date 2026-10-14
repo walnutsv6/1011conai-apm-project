@@ -32,6 +32,7 @@ DEFAULT_SHOTS = {
     "upper": {"tags": "upper body", "orientation": "portrait", "negative": "full body, wide shot"},
     "cowboy": {"tags": "cowboy shot", "orientation": "portrait", "negative": "full body, wide shot"},
     "full": {"tags": "full body", "orientation": "portrait", "negative": "close-up, cropped"},
+    "chest": {"tags": "close-up, upper body, chest focus, breast focus", "orientation": "portrait", "negative": "full body, wide shot, legs"},
     "lying": {"tags": "lying, on side, from above", "orientation": "landscape", "negative": "full body, wide shot"},
 }
 

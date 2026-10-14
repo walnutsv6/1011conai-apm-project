@@ -10,7 +10,7 @@
 
 ## Spec
 - top: `project`, `title`, `theme` (slug for the user-run folder), `defaults`, `poses`, `character`, `cover`, `chapters`.
-- `defaults`: `model`, `steps`, `scale`, `rating`, `require_zero_anlas`, `base_tags` (must contain an adult tag), `gaze`, `style`, `covered_tags`, `back_tags`, `exposed_expression`, `clothed_negative`, `exposed_negative`, `common_negative` (must contain `child`), `shots` (id -> `{tags, orientation, negative}`; built-ins: closeup, upper, cowboy, full, lying).
+- `defaults`: `model`, `steps`, `scale`, `rating`, `require_zero_anlas`, `base_tags` (must contain an adult tag), `gaze`, `style`, `covered_tags`, `back_tags`, `exposed_expression`, `clothed_negative`, `exposed_negative`, `common_negative` (must contain `child`), `shots` (id -> `{tags, orientation, negative}`; built-ins: closeup, upper, chest, cowboy, full, lying).
 - `poses`: id -> `{tags, expression}`.
 - `character`: `name` (`[A-Za-z0-9_-]`, folder name), `seed`, `appearance` (with a bangs tag), `expression`, `body`, `negative`, optional `source` (see existing-characters.md).
 - `cover`: `label`, `class` (clothed/partial/swimsuit/underwear), `scene`, `scene_private`, `outfit`, `pose`, `shot`, optional `negative`, `append_pose`, `seed`, `orientation`, `note`.
