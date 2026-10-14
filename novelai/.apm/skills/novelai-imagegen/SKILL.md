@@ -7,7 +7,7 @@ description: Generate and edit raster images through the NovelAI image API with 
 
 Use NovelAI only when the user explicitly selects it. Keep this skill separate from the built-in OpenAI image-generation path.
 
-For requests involving underwear, toplessness, nudity, or a clearly visible exposed groin (bottomless), read [the image production guidelines](references/sexual_content_guidelines.md) before planning prompts or outputs. Apply the topless and nude workflow below when relevant.
+For requests involving underwear, toplessness, nudity, or a clearly visible exposed groin (bottomless), read [the image production guidelines](references/sexual_content_guidelines.md) before planning prompts or outputs. If the image has two or more characters (kissing, embracing, or other physical contact), also read [the multi-character guidelines](references/multi_character_guidelines.md). Apply the topless and nude workflow below when relevant.
 
 ## Topless and nude prompt requests
 
