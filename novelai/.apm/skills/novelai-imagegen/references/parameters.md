@@ -22,9 +22,16 @@ Use schema version 1. Pass request JSON with `--request` or `--request-json-stdi
     "confirm_above_anlas": 100,
     "confirmed_paid": false
   },
-  "output": {"basename": "baseball-player", "format": "png"}
+  "output": {"basename": "baseball-player", "character": "baseball-player", "format": "png"}
 }
 ```
+
+Output fields:
+
+- `basename`: file name stem. The runner appends `-seed<seed>`.
+- `character`: character folder slug (required by convention). Images go to `<out-dir>/<character>/` and metadata to `<out-dir>/<character>/manifest/<stem>.json`. Use the same slug for the same character, and a different one for each character.
+- `format`: `png` or `webp`.
+- `directory`: base output directory (overridden by `--out-dir`); default `output/novelai-imagegen`.
 
 Omit `size` to use orientation-aware zero-Anlas defaults. Omit both `size` and `orientation` for `1024x1024`.
 

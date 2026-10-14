@@ -37,7 +37,9 @@ def collect(images_dir, include_superseded=False):
             continue
         d = m.groupdict()
         meta = {}
-        js = png.with_suffix(".json")
+        js = png.parent / "manifest" / f"{png.stem}.json"
+        if not js.exists():  # legacy layout: sidecar next to the image
+            js = png.with_suffix(".json")
         if js.exists():
             try:
                 meta = json.loads(js.read_text(encoding="utf-8"))

@@ -24,6 +24,7 @@ from pathlib import Path
 from typing import Any
 
 SCHEMA_VERSION = 1
+MANIFEST_DIRNAME = "manifest"
 ZERO_MAX_PIXELS = 1_048_576
 ZERO_MAX_STEPS = 28
 DEFAULT_MODEL = "nai-diffusion-5-full"
@@ -168,6 +169,16 @@ def output_dir(value: str | None, request: dict[str, Any], root: Path) -> Path:
     path = Path(raw).expanduser()
     path = (path if path.is_absolute() else root / path).resolve()
     inside(path, root, "output directory")
+    character = obj(request.get("output", {}), "output").get("character")
+    if character is not None:
+        if not isinstance(character, str):
+            raise RunnerError("INVALID_REQUEST", "output.character must be a string.")
+        slug = re.sub(r"[^A-Za-z0-9._-]+", "-", character).strip("-.")[:80]
+        if not slug:
+            raise RunnerError("INVALID_REQUEST", "output.character is empty after normalization.")
+        # Do not nest twice when the caller already points at the character folder.
+        if path.name != slug:
+            path = path / slug
     path.mkdir(parents=True, exist_ok=True)
     return path
 
@@ -546,7 +557,9 @@ def save_images(
         )
         path = unique_path(directory, f"{base}-{suffix}", f".{fmt}")
         image.save(path)
-        metadata = path.with_suffix(".json")
+        manifest_dir = directory / MANIFEST_DIRNAME
+        manifest_dir.mkdir(parents=True, exist_ok=True)
+        metadata = manifest_dir / f"{path.stem}.json"
         sha = hash_file(path)
         metadata.write_text(
             json.dumps(

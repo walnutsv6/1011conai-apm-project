@@ -67,7 +67,7 @@ In the commands below, replace `<skills-root>` with the installed skills directo
 - Subjects are always adults: keep `mature female, adult woman, 20s, tall` in the base tags and `child, loli, petite, flat chest` in the negative. Do not remove them.
 - Composition `cowboy shot` + `looking at viewer`; negative `full body, wide shot` to keep framing uniform.
 - Transparent version: replace **only** the background segment with `transparent background, simple background, no background`; set `straight_alpha: true`, `tag_hint_transparent_background: true`; in negative add `scenery, background, outdoors`. Verify the alpha channel.
-- Filename: `<character>-<outfit>-<pose>-<bg|transparent>[-<note>][-vN]-seed<seed>.png` with its adjacent `.json`.
+- Filename: `<character>-<outfit>-<pose>-<bg|transparent>[-<note>][-vN]-seed<seed>.png`; its metadata JSON has the same stem and lives in the `manifest/` subfolder next to the image.
 
 ## Fix patterns (change one thing, keep the seed)
 
@@ -92,7 +92,9 @@ Override keys: `replace_pose_expression`, `replace_outfit`, `append_outfit`, `re
 output/novelai-imagegen/<project>/
   spec.json
   requests/            # generated request JSON + manifest.json
-  images/<character>/  # png + json (runner output), superseded/ for old takes
+  images/<character>/           # png only (runner output), one folder per character
+  images/<character>/manifest/  # per-image metadata json (runner output)
+  images/<character>/superseded/  # old takes; move each png together with its manifest/<stem>.json
   prompts.md           # generated prompt tables
   index.html           # project list page, latest only (build_index.py)
   compare.html         # old vs new, on demand (build_compare.py)
