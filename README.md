@@ -6,7 +6,7 @@
 | --- | --- |
 | `development` | 共通の開発方針、実装レビュー担当、`issue-implementation` |
 | `game-audio` | `gb-audio-to-pyxres`、`pyxel-bgm-player` |
-| `novelai` | `novelai-imagegen`、`novelai-variations`、`novelai-strip-sequence` |
+| `novelai` | `novelai-imagegen`、`novelai-variations`、`novelai-strip-sequence`、`novelai-gravure-book` |
 | `tetris` | `tetris-spec-interviewer` |
 
 各スキルの参照資料・スクリプト・サンプルは、スキルと一緒に配布されます。
@@ -27,7 +27,7 @@ apm install walnutsv6/1011conai-apm-project/game-audio --skill pyxel-bgm-player 
 apm install walnutsv6/1011conai-apm-project/novelai --skill novelai-imagegen --target codex
 ```
 
-`novelai-variations` と `novelai-strip-sequence` は `novelai-imagegen` の手順とスクリプトを使います。これらを選ぶ場合は `novelai-imagegen` も導入してください。
+`novelai-variations`、`novelai-strip-sequence`、`novelai-gravure-book` は `novelai-imagegen` の手順とスクリプトを使います。これらを選ぶ場合は `novelai-imagegen` も導入してください。
 
 NovelAIパッケージには、性的描写を含む画像の制作ガイドラインと、該当する依頼でそのガイドラインを参照するInstructionを含めています。ガイドラインは`novelai-imagegen`スキルの参照資料として配布されます。Codexの`AGENTS.md`へInstructionを反映する場合は、NovelAIパッケージを導入した利用プロジェクトで`apm compile --target codex`を実行します。
 
