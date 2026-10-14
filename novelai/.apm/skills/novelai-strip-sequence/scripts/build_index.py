@@ -53,12 +53,12 @@ nav a span{width:10px;height:10px;border-radius:50%}
 section{margin:0 0 48px;scroll-margin-top:16px}
 .char-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;padding:0 0 10px;margin:0 0 12px;border-bottom:4px solid var(--c)}
 .char-head h2{margin:0;font-size:1.5rem}.char-head .meta{color:var(--muted);font-size:.85rem}
-.viewer{display:flex;gap:16px;flex-wrap:wrap;margin:0 0 16px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
-.stage-box{flex:0 0 auto;width:min(320px,100%)}
+.viewer{display:flex;flex-direction:column;align-items:center;gap:16px;margin:0 0 16px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+.stage-box{flex:0 0 auto;width:min(640px,100%)}
 .stage-box .frame{width:100%;aspect-ratio:832/1216;border-radius:8px;overflow:hidden;background:var(--bg);display:flex;align-items:center;justify-content:center;color:var(--muted)}
 .stage-box .frame img{width:100%;height:100%;object-fit:cover;display:block}
 .stage-box .cap{margin:6px 0 0;text-align:center;font-weight:700}.stage-box .sub{text-align:center;color:var(--muted);font-size:.8rem}
-.ctrl{flex:1 1 220px;display:flex;flex-direction:column;gap:10px;justify-content:center}
+.ctrl{width:min(640px,100%);display:flex;flex-direction:column;gap:10px}
 .ctrl .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .ctrl button,.ctrl select{font:inherit;padding:6px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--text);cursor:pointer}
 .ctrl button.on{background:var(--accent);color:#fff;border-color:var(--accent)}

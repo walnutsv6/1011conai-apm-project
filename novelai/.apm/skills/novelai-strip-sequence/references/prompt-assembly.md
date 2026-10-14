@@ -17,6 +17,7 @@
   - `clothed` / `partial` / `underwear`: `rating:<stage.rating or defaults.rating>`
   - `topless`, `nude`: `rating:explicit, nipples`
   - `bottomless` (breasts covered): `rating:explicit`
+- `topless` / `bottomless` / `nude` stages append `defaults.exposed_expression` (default `embarrassed, shy, blush`) to `[pose expression]`, skipping tags already there. Set it to `""` to disable, or change it per project.
 - Keep the order stable. Under a fixed seed, reordering tags changes the whole image.
 
 ## Negative order
@@ -40,7 +41,7 @@
     "modes": ["bg", "transparent"],
     "pose_mode": "fixed" | "per_stage", "fixed_pose": "<pose id>",   // fixed_pose required for fixed
     "base_tags", "composition", "gaze", "style",
-    "covered_tags", "clothed_negative", "exposed_negative", "common_negative"
+    "covered_tags", "exposed_expression", "clothed_negative", "exposed_negative", "common_negative"
   },
   "poses":  { "<id>": { "tags": "...", "expression": "..." } },
   "stages": [                                            // order = sequence order

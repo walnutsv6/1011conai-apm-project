@@ -20,6 +20,7 @@ from pathlib import Path
 
 TRANSPARENT_BG = "transparent background, simple background, no background"
 TRANSPARENT_NEG = "scenery, background, outdoors"
+DEFAULT_EXPOSED_EXPRESSION = "embarrassed, shy, blush"
 CLASSES = ["clothed", "partial", "underwear", "topless", "bottomless", "nude"]
 SCRIPT_ONLY = {"topless", "bottomless", "nude"}
 PRIVATE_REQUIRED = {"underwear", "topless", "bottomless", "nude"}
@@ -118,6 +119,10 @@ def build(spec, cname, char, stage, variant, mode, rating, suffix):
     appearance = join(char["appearance"], ov.get("append_appearance", ""))
     stage_tags = join(ov.get("replace_stage", char["stages"][stage["id"]]), ov.get("append_stage", ""))
     pose_expr = ov.get("replace_pose_expression", pose_def.get("expression", ""))
+    if cls in SCRIPT_ONLY:  # topless onward: shy/blush by default (defaults.exposed_expression, "" disables)
+        have = {t.strip() for t in pose_expr.split(",")}
+        extra = [t.strip() for t in d.get("exposed_expression", DEFAULT_EXPOSED_EXPRESSION).split(",")]
+        pose_expr = join(pose_expr, ", ".join(t for t in extra if t and t not in have))
     body = join(char.get("body", ""), ov.get("append_body", ""))
 
     cover = d.get("covered_tags", "covering crotch") if variant == "covered" else ""

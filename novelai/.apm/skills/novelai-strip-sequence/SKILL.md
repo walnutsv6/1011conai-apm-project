@@ -92,14 +92,14 @@ In the commands below, `<skills-root>` is the installed skills directory (`.clau
    ```bash
    python <skills-root>/novelai-strip-sequence/scripts/build_index.py --project-dir output/novelai-imagegen/<project> [--title "<title>"]
    ```
-   One page per project: per character a **slideshow viewer** (play / pause / step / speed; mode switch; nude composition preference `covered` / `open` / `all`; missing frames are skipped) and a stage table (columns = stages in order, rows = modes). Stages without an image show a dashed frame ("ユーザー生成枠" for script-only stages), so the frame for topless/nude exists before they are generated. Latest `vN` wins; `superseded/` is ignored.
+   One page per project: per character a **slideshow viewer** (current image centred at the top, 640px wide, with the control panel directly below it; play / pause / step / speed; mode switch; nude composition preference `covered` / `open` / `all`; missing frames are skipped) and a stage table (columns = stages in order, rows = modes). Stages without an image show a dashed frame ("ユーザー生成枠" for script-only stages), so the frame for topless/nude exists before they are generated. Latest `vN` wins; `superseded/` is ignored.
 8. **Report**: index.html path, counts (characters x stages x modes), seeds, estimated Anlas for agent-generated images, the user-run script paths and what the user still has to run. Do not claim success for images not inspected, and do not claim anything about user-run images.
 
 ## Spec essentials
 
 See [references/prompt-assembly.md](references/prompt-assembly.md) for the exact prompt/negative order and every spec key. In short:
 
-- `defaults`: model, orientation, steps, scale, rating, `modes`, `pose_mode`, `fixed_pose`, `base_tags`, `composition`, `gaze`, `style`, `covered_tags`, `clothed_negative`, `exposed_negative`, `common_negative`, `require_zero_anlas`.
+- `defaults`: model, orientation, steps, scale, rating, `modes`, `pose_mode`, `fixed_pose`, `base_tags`, `composition`, `gaze`, `style`, `covered_tags`, `exposed_expression` (default `embarrassed, shy, blush`, added from topless onward), `clothed_negative`, `exposed_negative`, `common_negative`, `require_zero_anlas`.
 - `poses`: id -> `{tags, expression, ...}`.
 - `stages`: ordered list of `{id, label, class, pose?, crotch?, negative?, rating?}`.
 - `characters.<name>`: `seed`, `appearance` (with bangs), `expression`, `scene`, `scene_private`, `body`, `negative`, `stages` (id -> outfit tags), `overrides`.
