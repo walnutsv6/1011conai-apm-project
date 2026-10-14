@@ -1,0 +1,62 @@
+{
+  "project": "racequeen",
+  "defaults": {
+    "model": "nai-diffusion-5-full",
+    "orientation": "portrait",
+    "steps": 28,
+    "scale": 5.0,
+    "rating": "sensitive",
+    "require_zero_anlas": true,
+    "modes": ["bg", "transparent"],
+    "base_tags": "1girl, solo, mature female, adult woman, 20s, tall",
+    "composition": "cowboy shot",
+    "gaze": "looking at viewer",
+    "style": "anime style, detailed, vivid colors",
+    "common_negative": "full body, wide shot, child, loli, petite, flat chest, multiple girls, bad anatomy, extra fingers, missing fingers, malformed hands, duplicate, text, watermark, logo, signature"
+  },
+  "outfits": {
+    "bikini": {
+      "negative": "race queen, umbrella, parasol, jacket, nude, nipples"
+    },
+    "modest": {
+      "negative": "umbrella, parasol, cleavage, midriff, navel, bikini, miniskirt, swimsuit"
+    }
+  },
+  "poses": {
+    "wave": {
+      "tags": "standing, contrapposto, waving, one hand raised",
+      "expression": "friendly smile"
+    },
+    "parasol": {
+      "tags": "standing, contrapposto, holding parasol, hand on hip",
+      "expression": "smile",
+      "negative_remove": ["umbrella", "parasol"]
+    }
+  },
+  "characters": {
+    "bay": {
+      "seed": 318245,
+      "appearance": "long wavy blonde hair, swept bangs, blue eyes, fair skin, light tan skin, glossy lips, beautiful face",
+      "expression": "confident smile",
+      "scene": "seaside race circuit at sunset, ocean, palm trees, orange sky, pit wall",
+      "body": "curvy, slim waist",
+      "negative": "dark skin, dark-skinned female, deep tan",
+      "outfits": {
+        "bikini": "coral pink and white triangle bikini, string bikini, cleavage, navel, bare shoulders, bare legs",
+        "modest": "race queen, coral pink and white one-piece dress with white sailor collar, short puffy sleeves, flared knee-length skirt, white ribbon belt, white ankle boots, white gloves"
+      },
+      "pairs": {
+        "bikini": ["wave"],
+        "modest": ["wave", "parasol"]
+      },
+      "_overrides_doc": "keys: replace_pose_expression, replace_outfit, append_appearance, append_negative, append_body, note (short slug, becomes a filename suffix); match keys: outfit, pose, mode (all optional)",
+      "overrides": [
+        {
+          "match": {"outfit": "modest", "pose": "parasol"},
+          "append_appearance": "hair ornament",
+          "note": "ornament"
+        }
+      ]
+    }
+  }
+}

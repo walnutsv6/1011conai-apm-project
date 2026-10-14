@@ -1,0 +1,4 @@
+name: 1011conai-novelai
+version: 0.1.0
+description: NovelAI image generation and outfit-pose variation skills.
+includes: auto

@@ -1,3 +1,8 @@
+---
+name: issue-implementation
+description: Use when implementing a feature request or fixing a bug in a repository, from understanding the issue through code changes and verification.
+---
+
 # Issue Implementation
 
 Issue の要件を確認し、既存のリポジトリに合わせて小さく実装・検証するための手順です。

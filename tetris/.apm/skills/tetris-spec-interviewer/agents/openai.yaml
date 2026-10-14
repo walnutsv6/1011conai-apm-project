@@ -1,0 +1,4 @@
+interface:
+  display_name: "Tetris Spec Interviewer"
+  short_description: "Tetris仕様を実装前に整理して質問"
+  default_prompt: "Use $tetris-spec-interviewer to interview me about the Tetris game specification before implementation."

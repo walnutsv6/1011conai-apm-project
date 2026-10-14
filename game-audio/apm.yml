@@ -1,0 +1,4 @@
+name: 1011conai-game-audio
+version: 0.1.0
+description: Game Boy audio conversion and Pyxel BGM player skills.
+includes: auto

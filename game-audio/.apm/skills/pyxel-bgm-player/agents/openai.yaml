@@ -1,0 +1,4 @@
+interface:
+  display_name: "Pyxel BGM Player"
+  short_description: "Pyxel音声からゲームパッド対応プレイヤーとpyxapp配布ZIPを作成"
+  default_prompt: "$pyxel-bgm-player を使い、この音声リソースからゲームパッド対応のBGMプレイヤーを作成し、pyxapp入りのシンプルな再生用ZIPへまとめてください。"

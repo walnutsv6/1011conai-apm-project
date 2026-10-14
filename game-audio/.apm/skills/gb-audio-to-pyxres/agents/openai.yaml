@@ -1,0 +1,4 @@
+interface:
+  display_name: "GB Audio to Pyxel"
+  short_description: "GBのBGM・効果音を解析し独自波形入りPyxelリソースへ変換"
+  default_prompt: "$gb-audio-to-pyxres を使い、このプロジェクトのGB ROMと逆アセンブルからBGM・効果音を抽出し、独自音色入りpyxresへ変換してください。"

@@ -1,0 +1,4 @@
+name: 1011conai-development
+version: 0.1.0
+description: Shared development instructions, implementation reviewer, and issue implementation skill.
+includes: auto

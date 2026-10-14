@@ -1,29 +1,51 @@
-# 個人開発用 APM ハーネスパッケージ
+# 個人開発用 APM パッケージ集
 
-[@microsoft/apm](https://github.com/microsoft/apm) で配布する、個人開発向けのエージェント設定パッケージのひな型です。指示、実装エージェント、スキルをひとつのパッケージとして管理できます。
+[@microsoft/apm](https://github.com/microsoft/apm) で必要なカテゴリだけ導入できるパッケージ集です。リポジトリ直下の各カテゴリが独立したAPMパッケージです。
 
-## パッケージの内容
+| パッケージ | 内容 |
+| --- | --- |
+| `development` | 共通の開発方針、実装レビュー担当、`issue-implementation` |
+| `game-audio` | `gb-audio-to-pyxres`、`pyxel-bgm-player` |
+| `novelai` | `novelai-imagegen`、`novelai-variations` |
+| `tetris` | `tetris-spec-interviewer` |
 
-| 種類 | ファイル | 役割 |
-| --- | --- | --- |
-| Instruction | `.apm/instructions/development.instructions.md` | リポジトリの調査、最小限の変更、テストを基本とする開発方針 |
-| Agent | `.apm/agents/implementation-reviewer.agent.md` | 変更差分の正確性とテスト観点を確認 |
-| Skill | `.apm/skills/issue-implementation/SKILL.md` | Issue の理解から実装・検証までの手順 |
+各スキルの参照資料・スクリプト・サンプルは、スキルと一緒に配布されます。
 
-## 使い方
+## インストール
 
-1. `apm.yml` の `name`、`description` を自分のパッケージに合わせて変更します。
-2. `.apm/` 以下の指示・エージェント・スキルを開発スタイルに合わせて編集し、不要なものは削除します。
-3. リポジトリを公開した後、利用するプロジェクトでインストールします。
+[APM公式の手順](https://microsoft.github.io/apm/quickstart/)でCLIを導入し、利用するプロジェクトで必要なパッケージを指定します。以下のGitHub経由の例は、この変更をコミットして公開した後に使えます。次はCodex向けの例です。
 
 ```bash
-apm install <owner>/<repository>
+apm install walnutsv6/1011conai-apm-project/tetris --target codex
+apm install walnutsv6/1011conai-apm-project/game-audio --target codex
 ```
 
-インストール後は、利用プロジェクトで `apm install` を実行して設定を反映します。パッケージを更新した場合は、利用プロジェクトで依存関係を更新してから再インストールしてください。
+カテゴリ内の1スキルだけが必要なら `--skill` で選べます。
 
-## カスタマイズのポイント
+```bash
+apm install walnutsv6/1011conai-apm-project/game-audio --skill pyxel-bgm-player --target codex
+apm install walnutsv6/1011conai-apm-project/novelai --skill novelai-imagegen --target codex
+```
 
-- Instruction の `applyTo` は適用対象のファイルに合わせて調整してください。
-- 共通の開発方針は instruction、特定の作業手順は skill、専用の役割は agent に記述します。
-- 利用者やプロジェクト固有の規約を追加し、ひな型の汎用的な指示と置き換えてください。
+`novelai-variations` は `novelai-imagegen` の手順とスクリプトを使います。差分生成を選ぶ場合は両方を導入してください。
+
+```bash
+apm install walnutsv6/1011conai-apm-project/novelai --skill novelai-imagegen --skill novelai-variations --target codex
+```
+
+手元の未公開の変更を試す場合は、**このリポジトリの外**に利用プロジェクトを用意し、ローカルパスでカテゴリを指定します。例: `apm install /path/to/repo/tetris --target codex`。APMはスキルを `.agents/skills/` に配置します。
+
+## 共通の開発方針
+
+開発方針やレビュー担当が必要なときだけ `development` を追加します。
+
+```bash
+apm install walnutsv6/1011conai-apm-project/development --target codex
+apm compile --target codex
+```
+
+全体に適用する指示は `development/.apm/instructions/` に置きます。対象を限定する指示にのみ `applyTo` を指定します。Claude Codeではインストール時に `.claude/rules/` へ配置されるため、重複を避ける目的で `CLAUDE.md` が生成されない場合があります。
+
+APM v0.33.0でローカルパスから依存パッケージとして導入した検証では、指示ファイルが依存一覧に表示されても `apm compile` は `AGENTS.md` を生成しませんでした。その場合は、`development/.apm/instructions/development.instructions.md` を利用プロジェクトの `.apm/instructions/` にコピーし、再度 `apm compile --target codex` を実行してください。
+
+パッケージを更新した場合は、利用プロジェクトで依存関係を更新してから再インストールしてください。
