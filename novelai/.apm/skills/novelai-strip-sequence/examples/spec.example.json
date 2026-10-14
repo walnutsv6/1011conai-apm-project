@@ -1,0 +1,57 @@
+{
+  "project": "mia-undress-demo",
+  "theme": "bedroom-office",
+  "defaults": {
+    "model": "nai-diffusion-5-full",
+    "orientation": "portrait",
+    "steps": 28,
+    "scale": 5.0,
+    "rating": "sensitive",
+    "require_zero_anlas": true,
+    "modes": ["bg", "transparent"],
+    "pose_mode": "fixed",
+    "fixed_pose": "stand",
+    "base_tags": "1girl, solo, mature female, adult woman, 20s, tall",
+    "composition": "cowboy shot",
+    "gaze": "looking at viewer",
+    "style": "anime style, detailed, vivid colors",
+    "covered_tags": "covering crotch",
+    "clothed_negative": "nude, topless, nipples, pussy, pubic hair",
+    "exposed_negative": "uncensored, pussy, pubic hair, genitals, sex, penis, 1boy, cum, bodily fluids",
+    "common_negative": "full body, wide shot, child, loli, petite, flat chest, multiple girls, bad anatomy, extra fingers, missing fingers, malformed hands, duplicate, text, watermark, logo, signature"
+  },
+  "poses": {
+    "stand": {"tags": "standing, contrapposto", "expression": "gentle smile, blush"},
+    "sit": {"tags": "sitting on bed, leaning back", "expression": "soft smile, blush"}
+  },
+  "stages": [
+    {"id": "dressed", "label": "着衣", "class": "clothed", "pose": "stand"},
+    {"id": "jacketoff", "label": "上着を脱ぐ", "class": "partial", "pose": "stand", "negative": "suit jacket, blazer"},
+    {"id": "blouseopen", "label": "ブラウスをはだける", "class": "partial", "pose": "stand", "negative": "suit jacket, blazer, buttoned shirt"},
+    {"id": "skirtoff", "label": "スカートを脱ぐ", "class": "underwear", "pose": "stand", "negative": "suit jacket, blazer, skirt, pants"},
+    {"id": "lingerie", "label": "下着姿", "class": "underwear", "pose": "sit", "negative": "suit jacket, blazer, skirt, pants, shirt, blouse"},
+    {"id": "topless", "label": "トップレス", "class": "topless", "pose": "sit", "negative": "suit jacket, blazer, skirt, pants, shirt, blouse, bra"},
+    {"id": "nude", "label": "ヌード", "class": "nude", "pose": "sit", "crotch": "both", "negative": "clothes, panties, bra, lingerie"}
+  ],
+  "characters": {
+    "mia": {
+      "seed": 318245,
+      "appearance": "long wavy brown hair, side swept bangs, green eyes, fair skin, beautiful face",
+      "expression": "calm smile",
+      "scene": "private bedroom, large bed, soft warm lamp light, curtains closed, indoors",
+      "scene_private": true,
+      "body": "curvy, slim waist",
+      "negative": "dark skin, blonde hair, blunt bangs",
+      "stages": {
+        "dressed": "navy suit jacket, white blouse, black pencil skirt, black pantyhose, office lady",
+        "jacketoff": "white blouse, black pencil skirt, black pantyhose, taking off jacket, jacket slipping off shoulders",
+        "blouseopen": "unbuttoned white blouse, open blouse, black bra visible, black pencil skirt, black pantyhose",
+        "skirtoff": "open white blouse, black bra, black panties, black thighhighs, skirt removed, bare thighs",
+        "lingerie": "black lace bra, black lace panties, black thighhighs, garter belt",
+        "topless": "topless, bare breasts, black lace panties, black thighhighs",
+        "nude": "nude, completely nude, bare breasts"
+      },
+      "overrides": []
+    }
+  }
+}
