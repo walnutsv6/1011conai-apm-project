@@ -6,7 +6,8 @@
 | --- | --- |
 | `development` | 共通の開発方針、実装レビュー担当、`issue-implementation` |
 | `game-audio` | `gb-audio-to-pyxres`、`pyxel-bgm-player` |
-| `novelai` | `novelai-imagegen`、`novelai-variations`、`novelai-strip-sequence` |
+| `novelai` | `novelai-imagegen`、`novelai-variations`、`novelai-strip-sequence`、`novelai-gravure-book` |
+| `novelai-metadata` | 既存のNovelAI PNG画像から生成メタデータをJSONへ抽出する `novelai-metadata` |
 | `tetris` | `tetris-spec-interviewer` |
 
 各スキルの参照資料・スクリプト・サンプルは、スキルと一緒に配布されます。
@@ -18,6 +19,7 @@
 ```bash
 apm install walnutsv6/1011conai-apm-project/tetris --target codex
 apm install walnutsv6/1011conai-apm-project/game-audio --target codex
+apm install walnutsv6/1011conai-apm-project/novelai-metadata --target codex
 ```
 
 カテゴリ内の1スキルだけが必要なら `--skill` で選べます。
@@ -27,7 +29,9 @@ apm install walnutsv6/1011conai-apm-project/game-audio --skill pyxel-bgm-player 
 apm install walnutsv6/1011conai-apm-project/novelai --skill novelai-imagegen --target codex
 ```
 
-`novelai-variations` と `novelai-strip-sequence` は `novelai-imagegen` の手順とスクリプトを使います。これらを選ぶ場合は `novelai-imagegen` も導入してください。
+`novelai-variations`、`novelai-strip-sequence`、`novelai-gravure-book` は `novelai-imagegen` の手順とスクリプトを使います。これらを選ぶ場合は `novelai-imagegen` も導入してください。
+
+`novelai-metadata` は画像生成用の `novelai` パッケージとは独立しています。抽出スクリプトの実行には Python 3 と Pillow が必要です。PNGのalphaチャネルに埋め込まれたメタデータを優先し、見つからない場合はNovelAI由来のPNGテキストを読み取ります。
 
 NovelAIパッケージには、性的描写を含む画像の制作ガイドラインと、該当する依頼でそのガイドラインを参照するInstructionを含めています。ガイドラインは`novelai-imagegen`スキルの参照資料として配布されます。Codexの`AGENTS.md`へInstructionを反映する場合は、NovelAIパッケージを導入した利用プロジェクトで`apm compile --target codex`を実行します。
 

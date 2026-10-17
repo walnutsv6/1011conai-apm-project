@@ -1,0 +1,89 @@
+{
+  "project": "mia-gravure-demo",
+  "title": "Mia Gravure Book",
+  "theme": "hotel-suite",
+  "defaults": {
+    "model": "nai-diffusion-5-full",
+    "steps": 28,
+    "scale": 5.0,
+    "rating": "sensitive",
+    "require_zero_anlas": true,
+    "base_tags": "1girl, solo, mature female, adult woman, 20s",
+    "gaze": "looking at viewer",
+    "style": "anime style, detailed, vivid colors",
+    "covered_tags": "covering crotch",
+    "clothed_negative": "nude, topless, nipples, pussy, pubic hair",
+    "exposed_negative": "uncensored, pussy, pubic hair, genitals, sex, penis, 1boy, cum, bodily fluids",
+    "common_negative": "child, loli, petite, flat chest, multiple girls, bad anatomy, extra fingers, missing fingers, malformed hands, duplicate, text, watermark, logo, signature"
+  },
+  "poses": {
+    "stand": {"tags": "standing, contrapposto", "expression": "gentle smile"},
+    "sit": {"tags": "sitting on bed, leaning back", "expression": "soft smile, blush"},
+    "lie": {"tags": "lying on bed, on back, arms above head", "expression": "relaxed smile, blush"},
+    "stretch": {"tags": "standing, arms up, stretching", "expression": "smile"},
+    "backlook": {"tags": "standing, arched back", "expression": "gentle smile"}
+  },
+  "character": {
+    "name": "mia",
+    "seed": 318245,
+    "appearance": "long wavy brown hair, side swept bangs, green eyes, fair skin, beautiful face",
+    "expression": "calm smile",
+    "body": "curvy, slim waist",
+    "negative": "dark skin, blonde hair, blunt bangs"
+  },
+  "cover": {
+    "label": "表紙",
+    "class": "clothed",
+    "scene": "luxury hotel suite, large window, soft morning light, indoors",
+    "scene_private": true,
+    "outfit": "white off-shoulder knit sweater, denim shorts",
+    "pose": "stand",
+    "shot": "cowboy"
+  },
+  "chapters": [
+    {
+      "id": "casual",
+      "title": "朝のひととき",
+      "scene": "luxury hotel suite, large window, soft morning light, indoors",
+      "scene_private": true,
+      "outfit": "white off-shoulder knit sweater, denim shorts",
+      "mode": "cuts",
+      "cuts": [
+        {"id": "c1", "label": "窓辺", "class": "clothed", "pose": "stand", "shot": "full"},
+        {"id": "c2", "label": "ベッドの上", "class": "clothed", "pose": "sit", "shot": "cowboy"},
+        {"id": "c3", "label": "クローズアップ", "class": "clothed", "pose": "stand", "shot": "closeup"}
+      ]
+    },
+    {
+      "id": "swim",
+      "title": "プライベートプール",
+      "scene": "private rooftop pool, nobody around, evening light, outdoors",
+      "scene_private": true,
+      "outfit": "white string bikini",
+      "mode": "cuts",
+      "cuts": [
+        {"id": "s1", "label": "水着", "class": "swimsuit", "pose": "stretch", "shot": "cowboy"},
+        {"id": "s2", "label": "水着・ベッド", "class": "swimsuit", "pose": "lie", "shot": "lying"}
+      ]
+    },
+    {
+      "id": "undress",
+      "title": "夜のスイート",
+      "scene": "private hotel bedroom, large bed, warm lamp light, curtains closed, indoors",
+      "scene_private": true,
+      "mode": "strip",
+      "cuts": [
+        {"id": "u1", "label": "ランジェリー", "class": "underwear", "pose": "sit", "shot": "cowboy",
+         "outfit": "black lace bra, black lace panties, black thighhighs"},
+        {"id": "u2", "label": "ブラを外す(背面)", "class": "underwear", "pose": "backlook", "shot": "cowboy",
+         "outfit": "unhooking bra, black lace panties, black thighhighs", "facing": "back"},
+        {"id": "u3", "label": "トップレス", "class": "topless", "pose": "sit", "shot": "cowboy", "facing": "front",
+         "outfit": "topless, bare breasts, black lace panties, black thighhighs",
+         "negative": "bra"},
+        {"id": "u4", "label": "ヌード", "class": "nude", "pose": "lie", "shot": "lying", "facing": "front", "crotch": "both",
+         "outfit": "nude, completely nude, bare breasts, black thighhighs",
+         "negative": "bra, panties"}
+      ]
+    }
+  ]
+}

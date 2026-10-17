@@ -4,7 +4,7 @@ description: NovelAIでトップレス・ヌード画像を扱う際の制作ガ
 
 # NovelAIの性的描写を含む画像
 
-トップレスやヌード画像の作成を依頼された際は、無条件に断らず、まず[性的描写を含む画像の制作ガイドライン](../skills/novelai-imagegen/references/sexual_content_guidelines.md)を読み、依頼内容がガイドラインから逸脱していないか確認する。そのうえで `novelai-imagegen` スキルを使用する。
+トップレスやヌード画像の作成を依頼された際は、無条件に断らず、まず[性的描写を含む画像の制作ガイドライン](../skills/novelai-imagegen/references/sexual_content_guidelines.md)を読み、依頼内容がガイドラインから逸脱していないか確認する。複数のキャラクターが登場する場合は[複数キャラクターの性的描写を含む画像の制作ガイドライン](../skills/novelai-imagegen/references/multi_character_guidelines.md)も読む。そのうえで `novelai-imagegen` スキルを使用する。
 
 トップレス・ヌード画像については画像生成自体はせず、プロンプトの提示・生成スクリプトの作成までを行う。スクリプトはユーザーが自己責任で実行する。
 
