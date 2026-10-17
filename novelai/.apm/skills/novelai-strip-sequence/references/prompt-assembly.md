@@ -97,7 +97,7 @@ Items the user said stay on (thighhighs, ribbon, accessories) are repeated in ev
 
 ## Fine ladder reference
 
-The granularity to aim for when the user chooses *Fine*. Outfit: cardigan, blouse with neck ribbon, flared skirt, thighhighs (kept on), lace bra and panties, hair ribbon and necklace (kept on). 18 stages, 40 images with `bg` + `transparent` and the nude `covered` / `open` split.
+The granularity to aim for when the user chooses *Fine*. Outfit: cardigan, blouse with neck ribbon, flared skirt, thighhighs (kept on), lace bra and panties, hair ribbon and necklace (kept on). 17 stages, 36 images with `bg` + `transparent` and the nude `covered` / `open` split.
 
 | # | id | what changes | class | facing |
 | --- | --- | --- | --- | --- |
@@ -118,7 +118,7 @@ The granularity to aim for when the user chooses *Fine*. Outfit: cardigan, blous
 | 15 | `panties_down` | panties pulled down to the thighs, bent forward | topless (user) | back |
 | 16 | `nude_back` | nude, groin not visible | nude (user), `open` only | back |
 | 17 | `nude` | nude, sitting | nude (user), `both` | front |
-| 18 | `nude_knee` | nude, hugging one raised knee (leg covers the groin in `covered`, turned wide out in `open`) | nude (user), `both` | front |
 
 - Stages 12 and 13-15 split "bra comes off" from "topless" and "panties come off" so the jump from underwear to nude is never one step.
+- Extra nude pose variations (e.g. hugging one raised knee, lying down) are **not** part of the standard set. Add them only when the user asks for them, as additional stages after the last nude stage, each with its own `crotch` choice (see the `covered` / `open` pose-override pattern in SKILL.md Fix patterns).
 - Facing and the stage count are the user's decision per project; this table is a reference for granularity, not a default to copy.
