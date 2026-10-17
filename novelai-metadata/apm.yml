@@ -1,0 +1,4 @@
+name: 1011conai-novelai-metadata
+version: 0.1.0
+description: Inspect NovelAI metadata contained in image files
+includes: auto
