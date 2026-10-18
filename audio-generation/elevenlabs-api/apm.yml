@@ -1,0 +1,4 @@
+name: 1011conai-elevenlabs-api
+version: 0.1.0
+description: Game BGM and sound effect generation skill using the ElevenLabs Music and Sound Effects APIs.
+includes: auto

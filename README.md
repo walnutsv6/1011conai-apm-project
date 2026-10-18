@@ -4,6 +4,8 @@
 
 | パッケージ | 内容 |
 | --- | --- |
+| `audio-generation/elevenlabs-api` | ElevenLabs APIでゲーム用BGM・効果音を生成する `elevenlabs-audio` |
+| `audio-generation/stable-audio-api` | Stable Audio 3.0 APIでゲーム用BGM・効果音を生成する `stable-audio-generation` |
 | `development` | 共通の開発方針、実装レビュー担当、`issue-implementation` |
 | `game-audio` | `gb-audio-to-pyxres`、`pyxel-bgm-player` |
 | `novelai` | `novelai-imagegen`、`novelai-variations`、`novelai-strip-sequence`、`novelai-gravure-book` |
@@ -20,6 +22,7 @@
 apm install walnutsv6/1011conai-apm-project/tetris --target codex
 apm install walnutsv6/1011conai-apm-project/game-audio --target codex
 apm install walnutsv6/1011conai-apm-project/novelai-metadata --target codex
+apm install walnutsv6/1011conai-apm-project/audio-generation/stable-audio-api --target codex
 ```
 
 カテゴリ内の1スキルだけが必要なら `--skill` で選べます。
@@ -32,6 +35,8 @@ apm install walnutsv6/1011conai-apm-project/novelai --skill novelai-imagegen --t
 `novelai-variations`、`novelai-strip-sequence`、`novelai-gravure-book` は `novelai-imagegen` の手順とスクリプトを使います。これらを選ぶ場合は `novelai-imagegen` も導入してください。
 
 `novelai-metadata` は画像生成用の `novelai` パッケージとは独立しています。抽出スクリプトの実行には Python 3 と Pillow が必要です。PNGのalphaチャネルに埋め込まれたメタデータを優先し、見つからない場合はNovelAI由来のPNGテキストを読み取ります。
+
+`audio-generation` 配下の各パッケージは生成APIごとに独立しています。どちらもPython標準ライブラリのみで動作し、実際の生成にはそれぞれ `ELEVENLABS_API_KEY` / `STABILITY_API_KEY` 環境変数が必要です（OGG/WAV変換や音量確認にはFFmpegを使います）。生成は有料のため、スキルは必ずdry-runで見積もりを提示し、ユーザーの承認後にのみAPIを呼び出します。
 
 NovelAIパッケージには、性的描写を含む画像の制作ガイドラインと、該当する依頼でそのガイドラインを参照するInstructionを含めています。ガイドラインは`novelai-imagegen`スキルの参照資料として配布されます。Codexの`AGENTS.md`へInstructionを反映する場合は、NovelAIパッケージを導入した利用プロジェクトで`apm compile --target codex`を実行します。
 

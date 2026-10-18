@@ -1,0 +1,4 @@
+name: 1011conai-stable-audio-api
+version: 0.1.0
+description: Game BGM and sound effect generation skill using the Stability AI Stable Audio 3.0 API.
+includes: auto
