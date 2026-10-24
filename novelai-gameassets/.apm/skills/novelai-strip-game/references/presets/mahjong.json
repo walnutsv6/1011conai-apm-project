@@ -1,0 +1,191 @@
+{
+  "id": "mahjong",
+  "label": "脱衣麻雀",
+  "rule": "キャラが1局負ける（プレイヤーが和了る）ごとに1段階脱ぐ。",
+  "default_stage_count": 5,
+  "stage_count_range": [
+    4,
+    6
+  ],
+  "framing": {
+    "orientation": "square",
+    "composition": "cowboy shot",
+    "note": "1024x1024、太もも上。上半身だけだとトップレスとヌードの差が見えないため"
+  },
+  "modes": [
+    "transparent"
+  ],
+  "exposed_expression": "blush",
+  "expressions": {
+    "normal": {
+      "label": "通常（ポーカーフェイス）",
+      "tags": "light smile, calm"
+    },
+    "riichi": {
+      "label": "リーチ（真剣）",
+      "tags": "serious, determined, narrowed eyes"
+    },
+    "agari": {
+      "label": "和了（得意げ）",
+      "tags": "smug, grin, confident"
+    },
+    "houjuu": {
+      "label": "放銃（ショック）",
+      "tags": "surprised, open mouth, shocked, blush"
+    },
+    "shy": {
+      "label": "照れ",
+      "tags": "embarrassed, shy, blush"
+    }
+  },
+  "optional_expressions": {},
+  "transition_expression": "shy",
+  "special_poses": {
+    "cut_riichi": {
+      "label": "リーチ（カットイン）",
+      "tags": "dynamic angle, holding mahjong tile, raising mahjong tile",
+      "expression": "serious, determined",
+      "stages": "to_underwear",
+      "orientation": "landscape",
+      "composition": "upper body, close-up"
+    },
+    "cut_tsumo": {
+      "label": "ツモ（カットイン）",
+      "tags": "dynamic angle, holding mahjong tile, showing mahjong tile to viewer",
+      "expression": "smug, grin",
+      "stages": "to_underwear",
+      "orientation": "landscape",
+      "composition": "upper body, close-up"
+    },
+    "cut_ron": {
+      "label": "ロン（カットイン）",
+      "tags": "dynamic angle, pointing at viewer",
+      "expression": "smug, grin",
+      "stages": "to_underwear",
+      "orientation": "landscape",
+      "composition": "upper body, close-up"
+    }
+  },
+  "special_pose_note": "カットインは横長1216x832。背景ありにする場合も雀荘や観客のいる場所にはせず、自室・個室にする。",
+  "stage_template": [
+    {
+      "id": "dressed",
+      "label": "着衣",
+      "class": "clothed",
+      "role": "main"
+    },
+    {
+      "id": "outer_tr",
+      "label": "上着を脱ぐ途中",
+      "class": "partial",
+      "role": "transition"
+    },
+    {
+      "id": "outeroff",
+      "label": "上着なし",
+      "class": "partial",
+      "role": "main"
+    },
+    {
+      "id": "under_tr",
+      "label": "服を脱ぐ途中",
+      "class": "underwear",
+      "role": "transition"
+    },
+    {
+      "id": "lingerie",
+      "label": "下着",
+      "class": "underwear",
+      "role": "main"
+    },
+    {
+      "id": "bra_tr",
+      "label": "ブラを外す途中",
+      "class": "underwear",
+      "role": "transition",
+      "facing": "ask"
+    },
+    {
+      "id": "topless",
+      "label": "トップレス",
+      "class": "topless",
+      "role": "main",
+      "facing": "ask"
+    },
+    {
+      "id": "panty_tr",
+      "label": "ショーツを脱ぐ途中",
+      "class": "topless",
+      "role": "transition",
+      "facing": "ask"
+    },
+    {
+      "id": "nude",
+      "label": "ヌード",
+      "class": "nude",
+      "role": "main",
+      "crotch": "both",
+      "facing": "ask"
+    }
+  ],
+  "events": {
+    "player_agari": {
+      "label": "和了（プレイヤー）",
+      "advance": 1,
+      "expression": "houjuu"
+    },
+    "char_agari": {
+      "label": "和了（キャラ）",
+      "advance": 0,
+      "expression": "agari",
+      "special": [
+        "cut_tsumo",
+        "cut_ron"
+      ]
+    },
+    "char_riichi": {
+      "label": "リーチ（キャラ）",
+      "advance": 0,
+      "expression": "riichi",
+      "special": [
+        "cut_riichi"
+      ]
+    },
+    "idle": {
+      "label": "待機",
+      "advance": 0,
+      "expression": "normal"
+    },
+    "after_strip": {
+      "label": "脱いだ直後",
+      "advance": 0,
+      "expression": "shy"
+    }
+  },
+  "oneshots": [
+    {
+      "id": "icon",
+      "kind": "icon",
+      "label": "キャラ選択アイコン",
+      "from": {
+        "stage": "dressed",
+        "expression": "normal"
+      }
+    },
+    {
+      "id": "title",
+      "kind": "title",
+      "label": "タイトル・キービジュアル",
+      "class": "clothed",
+      "orientation": "landscape"
+    },
+    {
+      "id": "reward",
+      "kind": "reward",
+      "label": "クリア時のご褒美CG",
+      "class": "nude",
+      "orientation": "portrait",
+      "crotch": "both"
+    }
+  ]
+}

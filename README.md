@@ -9,6 +9,7 @@
 | `development` | 共通の開発方針、実装レビュー担当、`issue-implementation` |
 | `game-audio` | `gb-audio-to-pyxres`、`pyxel-bgm-player` |
 | `novelai` | `novelai-imagegen`、`novelai-variations`、`novelai-strip-sequence`、`novelai-gravure-book` |
+| `novelai-gameassets` | NovelAIでゲームアセットを作る補助パッケージ。脱衣ゲーム（野球拳・脱衣麻雀・クイズ）の立ち絵・途中段階・カットイン・一枚絵を作る `novelai-strip-game`（`novelai` パッケージに依存） |
 | `novelai-metadata` | 既存のNovelAI PNG画像から生成メタデータをJSONへ抽出する `novelai-metadata` |
 | `tetris` | `tetris-spec-interviewer` |
 
@@ -33,6 +34,12 @@ apm install walnutsv6/1011conai-apm-project/novelai --skill novelai-imagegen --t
 ```
 
 `novelai-variations`、`novelai-strip-sequence`、`novelai-gravure-book` は `novelai-imagegen` の手順とスクリプトを使います。これらを選ぶ場合は `novelai-imagegen` も導入してください。
+
+`novelai-gameassets` は `novelai` パッケージの補助パッケージです。`apm.yml` で `novelai` に依存しているため、導入すると `novelai` も一緒に入ります。`novelai-strip-game` は `novelai-imagegen` のランナーと `novelai-strip-sequence` のスクリプトを呼び出し、性的描写のガイドラインも `novelai-imagegen` のものを使います。そのため、`novelai` 側を `--skill` で絞る場合も、この2つは必ず導入してください。inpaint方式の背景透過には、`uv` で `rembg` を実行します（初回はモデルをダウンロードします）。
+
+```bash
+apm install walnutsv6/1011conai-apm-project/novelai-gameassets --target claude
+```
 
 `novelai-metadata` は画像生成用の `novelai` パッケージとは独立しています。抽出スクリプトの実行には Python 3 と Pillow が必要です。PNGのalphaチャネルに埋め込まれたメタデータを優先し、見つからない場合はNovelAI由来のPNGテキストを読み取ります。
 
