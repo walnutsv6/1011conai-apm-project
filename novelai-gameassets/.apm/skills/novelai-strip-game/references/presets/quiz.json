@@ -1,0 +1,50 @@
+{
+  "id": "quiz",
+  "label": "クイズ",
+  "rule": "プレイヤーが正解するごとにキャラが1段階脱ぐ。段階数は問題数・必要正解数に合わせる。",
+  "default_stage_count": 6,
+  "stage_count_range": [4, 10],
+  "framing": {"orientation": "portrait", "composition": "cowboy shot", "note": "832x1216、腰〜太もも上"},
+  "modes": ["transparent"],
+  "exposed_expression": "blush",
+  "expressions": {
+    "normal":  {"label": "通常", "tags": "gentle smile"},
+    "asking":  {"label": "出題中（いたずらっぽい）", "tags": "teasing smile, one eye closed"},
+    "correct": {"label": "プレイヤー正解（悔しい）", "tags": "pout, frustrated, blush"},
+    "wrong":   {"label": "プレイヤー不正解（得意げ）", "tags": "smug, grin, confident"},
+    "shy":     {"label": "照れ", "tags": "embarrassed, shy, blush"}
+  },
+  "optional_expressions": {},
+  "transition_expression": "shy",
+  "special_poses": {
+    "ask":    {"label": "出題", "tags": "standing, holding card, pointing at viewer", "expression": "teasing smile", "stages": "to_underwear"},
+    "maru":   {"label": "○", "tags": "standing, arms up, hands joined above head, arms forming circle", "expression": "smile, open mouth", "stages": "to_underwear"},
+    "batsu":  {"label": "×", "tags": "standing, x arms, crossed arms in front of chest", "expression": "smug", "stages": "to_underwear"}
+  },
+  "special_pose_note": "○×のタグ（arms forming circle / x arms）は効きが不安定なため試作で確認する。観客のいるクイズ番組のスタジオは背景ありの画像に使わない。",
+  "stage_template": [
+    {"id": "dressed",  "label": "着衣", "class": "clothed", "role": "main"},
+    {"id": "outer_tr", "label": "上着を脱ぐ途中", "class": "partial", "role": "transition"},
+    {"id": "outeroff", "label": "上着なし", "class": "partial", "role": "main"},
+    {"id": "top_tr",   "label": "トップスを脱ぐ途中", "class": "underwear", "role": "transition"},
+    {"id": "topoff",   "label": "トップスなし", "class": "underwear", "role": "main"},
+    {"id": "skirt_tr", "label": "スカートを脱ぐ途中", "class": "underwear", "role": "transition"},
+    {"id": "lingerie", "label": "下着", "class": "underwear", "role": "main"},
+    {"id": "bra_tr",   "label": "ブラを外す途中", "class": "underwear", "role": "transition", "facing": "ask"},
+    {"id": "topless",  "label": "トップレス", "class": "topless", "role": "main", "facing": "ask"},
+    {"id": "panty_tr", "label": "ショーツを脱ぐ途中", "class": "topless", "role": "transition", "facing": "ask"},
+    {"id": "nude",     "label": "ヌード", "class": "nude", "role": "main", "crotch": "both", "facing": "ask"}
+  ],
+  "events": {
+    "question":      {"label": "出題", "advance": 0, "expression": "asking", "special": ["ask"]},
+    "player_correct":{"label": "正解（プレイヤー）", "advance": 1, "expression": "correct", "special": ["batsu"]},
+    "player_wrong":  {"label": "不正解（プレイヤー）", "advance": 0, "expression": "wrong", "special": ["maru"]},
+    "idle":          {"label": "待機", "advance": 0, "expression": "normal"},
+    "after_strip":   {"label": "脱いだ直後", "advance": 0, "expression": "shy"}
+  },
+  "oneshots": [
+    {"id": "icon",   "kind": "icon",   "label": "キャラ選択アイコン", "from": {"stage": "dressed", "expression": "normal"}},
+    {"id": "title",  "kind": "title",  "label": "タイトル・キービジュアル", "class": "clothed", "orientation": "landscape"},
+    {"id": "reward", "kind": "reward", "label": "クリア時のご褒美CG", "class": "nude", "orientation": "portrait", "crotch": "both"}
+  ]
+}

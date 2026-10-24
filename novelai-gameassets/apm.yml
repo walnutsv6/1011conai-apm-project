@@ -1,0 +1,7 @@
+name: 1011conai-novelai-gameassets
+version: 0.1.0
+description: Supplementary NovelAI skills for game asset creation (strip-game sprites, transitions, cut-ins and one-shot CGs). Depends on the novelai package (novelai-imagegen, novelai-strip-sequence).
+includes: auto
+dependencies:
+  apm:
+    - walnutsv6/1011conai-apm-project/novelai#novelai-v0.4.2

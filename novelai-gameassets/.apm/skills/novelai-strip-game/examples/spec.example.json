@@ -1,0 +1,260 @@
+{
+  "project": "mia-yakyuken-demo",
+  "theme": "yakyuken",
+  "game": "yakyuken",
+  "methods": [
+    "seed",
+    "inpaint"
+  ],
+  "defaults": {
+    "model": "nai-diffusion-5-full",
+    "orientation": "portrait",
+    "steps": 28,
+    "scale": 5.0,
+    "rating": "sensitive",
+    "require_zero_anlas": true,
+    "modes": [
+      "transparent"
+    ],
+    "pose_mode": "fixed",
+    "fixed_pose": "stand",
+    "base_tags": "1girl, solo, mature female, adult woman, 20s, tall",
+    "composition": "cowboy shot",
+    "gaze": "looking at viewer",
+    "style": "anime style, detailed, vivid colors",
+    "covered_tags": "covering crotch",
+    "exposed_expression": "blush",
+    "plate_background": "simple background, grey background",
+    "inpaint_strength": 1.0,
+    "face_inpaint_strength": 0.85,
+    "clothed_negative": "nude, topless, nipples, pussy, pubic hair",
+    "exposed_negative": "uncensored, pussy, pubic hair, genitals, sex, penis, 1boy, cum, bodily fluids",
+    "common_negative": "full body, wide shot, child, loli, petite, flat chest, multiple girls, bad anatomy, extra fingers, missing fingers, malformed hands, duplicate, text, watermark, logo, signature"
+  },
+  "poses": {
+    "stand": {
+      "tags": "standing, arms at sides",
+      "expression": "gentle smile"
+    },
+    "undress": {
+      "tags": "standing, hands on clothes, undressing",
+      "expression": ""
+    },
+    "unhook": {
+      "tags": "standing, hands behind back, unhooking bra",
+      "expression": ""
+    }
+  },
+  "expressions": {
+    "normal": {
+      "label": "通常",
+      "tags": "gentle smile, blush"
+    },
+    "win": {
+      "label": "勝ち（嬉しい）",
+      "tags": "happy, smile, open mouth"
+    },
+    "lose": {
+      "label": "負け（悔しい）",
+      "tags": "pout, frustrated, blush"
+    },
+    "shy": {
+      "label": "照れ",
+      "tags": "embarrassed, shy, blush"
+    }
+  },
+  "expression_set": [
+    "normal",
+    "win",
+    "lose",
+    "shy"
+  ],
+  "transition_expression": "shy",
+  "special_poses": {
+    "rock": {
+      "label": "グー",
+      "tags": "standing, one arm extended forward, clenched fist, fist toward viewer",
+      "expression": "determined, smile",
+      "stages": "all"
+    },
+    "scissors": {
+      "label": "チョキ",
+      "tags": "standing, one arm extended forward, v sign toward viewer",
+      "expression": "determined, smile",
+      "stages": "all"
+    },
+    "paper": {
+      "label": "パー",
+      "tags": "standing, one arm extended forward, open hand, palm toward viewer",
+      "expression": "determined, smile",
+      "stages": "all"
+    }
+  },
+  "stages": [
+    {
+      "id": "dressed",
+      "label": "着衣",
+      "class": "clothed",
+      "role": "main"
+    },
+    {
+      "id": "jacket_tr",
+      "label": "上着を脱ぐ途中",
+      "class": "partial",
+      "role": "transition",
+      "inpaint_regions": [
+        "upper"
+      ],
+      "pose": "undress"
+    },
+    {
+      "id": "jacketoff",
+      "label": "上着なし",
+      "class": "partial",
+      "role": "main",
+      "negative": "suit jacket, blazer",
+      "inpaint_regions": [
+        "upper"
+      ]
+    },
+    {
+      "id": "skirt_tr",
+      "label": "スカートを脱ぐ途中",
+      "class": "underwear",
+      "role": "transition",
+      "negative": "suit jacket, blazer",
+      "inpaint_regions": [
+        "lower"
+      ],
+      "pose": "undress"
+    },
+    {
+      "id": "lingerie",
+      "label": "下着",
+      "class": "underwear",
+      "role": "main",
+      "negative": "suit jacket, blazer, skirt, shirt, blouse",
+      "inpaint_regions": [
+        "torso"
+      ]
+    },
+    {
+      "id": "bra_tr",
+      "label": "ブラを外す途中（背面）",
+      "class": "underwear",
+      "role": "transition",
+      "facing": "back",
+      "negative": "suit jacket, blazer, skirt, shirt, blouse",
+      "pose": "unhook"
+    },
+    {
+      "id": "topless",
+      "label": "トップレス",
+      "class": "topless",
+      "role": "main",
+      "negative": "suit jacket, blazer, skirt, shirt, blouse, bra",
+      "inpaint_regions": [
+        "chest"
+      ]
+    },
+    {
+      "id": "nude",
+      "label": "ヌード",
+      "class": "nude",
+      "role": "main",
+      "crotch": "both",
+      "negative": "clothes, panties, bra, lingerie",
+      "inpaint_regions": [
+        "lower"
+      ]
+    }
+  ],
+  "events": {
+    "player_win": {
+      "label": "勝ち（プレイヤー）",
+      "advance": 1,
+      "expression": "lose"
+    },
+    "player_lose": {
+      "label": "負け（プレイヤー）",
+      "advance": 0,
+      "expression": "win"
+    },
+    "call": {
+      "label": "じゃんけん…",
+      "advance": 0,
+      "special": [
+        "rock",
+        "scissors",
+        "paper"
+      ],
+      "random_special": true
+    },
+    "idle": {
+      "label": "待機",
+      "advance": 0,
+      "expression": "normal"
+    },
+    "after_strip": {
+      "label": "脱いだ直後",
+      "advance": 0,
+      "expression": "shy"
+    }
+  },
+  "oneshots": [
+    {
+      "id": "icon",
+      "kind": "icon",
+      "label": "キャラ選択アイコン",
+      "from": {
+        "stage": "dressed",
+        "expression": "normal"
+      }
+    },
+    {
+      "id": "title",
+      "kind": "title",
+      "label": "タイトル・キービジュアル",
+      "class": "clothed",
+      "orientation": "landscape",
+      "expression": "normal",
+      "pose_tags": "standing, hand on hip, wink"
+    },
+    {
+      "id": "reward",
+      "kind": "reward",
+      "label": "クリア時のご褒美CG",
+      "class": "nude",
+      "orientation": "portrait",
+      "crotch": "both",
+      "expression": "shy",
+      "pose_tags": "sitting on bed, leaning back"
+    }
+  ],
+  "characters": {
+    "mia": {
+      "seed": 318245,
+      "appearance": "long wavy brown hair, side swept bangs, green eyes, fair skin, beautiful face",
+      "expression": "",
+      "scene": "private bedroom, large bed, soft warm lamp light, curtains closed, indoors",
+      "scene_private": true,
+      "body": "curvy, slim waist",
+      "negative": "dark skin, blonde hair, blunt bangs",
+      "stages": {
+        "dressed": "navy suit jacket, white blouse, black pencil skirt, black pantyhose, office lady",
+        "jacket_tr": "white blouse, black pencil skirt, black pantyhose, taking off jacket, jacket slipping off shoulders",
+        "jacketoff": "white blouse, black pencil skirt, black pantyhose",
+        "skirt_tr": "white blouse, black pencil skirt pulled down to thighs, black panties visible, black pantyhose, undressing",
+        "lingerie": "black lace bra, black lace panties, black thighhighs",
+        "bra_tr": "hands on bra clasp, black lace bra, black lace panties, black thighhighs",
+        "topless": "topless, bare breasts, black lace panties, black thighhighs",
+        "nude": "nude, completely nude, bare breasts, black thighhighs"
+      },
+      "oneshots": {
+        "title": "navy suit jacket, white blouse, black pencil skirt, office lady",
+        "reward": "nude, completely nude, bare breasts, black thighhighs"
+      },
+      "overrides": []
+    }
+  }
+}
