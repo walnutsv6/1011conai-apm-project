@@ -1,0 +1,11 @@
+{
+  "_comment": "Copy to <project root>/imagegen.config.json. Endpoint settings only: NEVER put an API key here. The key is read from the environment variable named in api_key_env. Keys starting with _ are ignored.",
+  "base_url": "http://localhost:8080/v1",
+  "model": "your-image-model-id",
+  "api_key_env": "IMAGEGEN_API_KEY",
+  "no_auth": false,
+  "params": {
+    "response_format": "b64_json",
+    "size": "1024x1024"
+  }
+}
