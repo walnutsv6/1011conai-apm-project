@@ -1,0 +1,4 @@
+name: 1011conai-openai-compatible-image-api
+version: 0.1.0
+description: 2D game asset (sprite, icon, tile) generation through any OpenAI-compatible Images API, with local background removal, pixel-art conversion and sprite-sheet packing.
+includes: auto

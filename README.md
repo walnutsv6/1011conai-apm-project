@@ -8,6 +8,7 @@
 | `audio-generation/stable-audio-api` | Stable Audio 3.0 APIでゲーム用BGM・効果音を生成する `stable-audio-generation` |
 | `development` | 共通の開発方針、実装レビュー担当、`issue-implementation` |
 | `game-audio` | `gb-audio-to-pyxres`、`pyxel-bgm-player` |
+| `image-generation/openai-compatible-api` | OpenAI互換のImages APIでゲーム用2Dアセット（スプライト・アイテム・アイコン・タイル）を生成・編集し、背景透過・ドット絵化・スプライトシート化まで行う `openai-compatible-imagegen` |
 | `novelai` | `novelai-imagegen`、`novelai-variations`、`novelai-strip-sequence`、`novelai-gravure-book` |
 | `novelai-gameassets` | NovelAIでゲームアセットを作る補助パッケージ。脱衣ゲーム（野球拳・脱衣麻雀・クイズ）の立ち絵・途中段階・カットイン・一枚絵を作る `novelai-strip-game`（`novelai` パッケージに依存） |
 | `novelai-metadata` | 既存のNovelAI PNG画像から生成メタデータをJSONへ抽出する `novelai-metadata` |
@@ -24,6 +25,7 @@ apm install walnutsv6/1011conai-apm-project/tetris --target codex
 apm install walnutsv6/1011conai-apm-project/game-audio --target codex
 apm install walnutsv6/1011conai-apm-project/novelai-metadata --target codex
 apm install walnutsv6/1011conai-apm-project/audio-generation/stable-audio-api --target codex
+apm install walnutsv6/1011conai-apm-project/image-generation/openai-compatible-api --target codex
 ```
 
 カテゴリ内の1スキルだけが必要なら `--skill` で選べます。
@@ -44,6 +46,8 @@ apm install walnutsv6/1011conai-apm-project/novelai-gameassets --target claude
 `novelai-metadata` は画像生成用の `novelai` パッケージとは独立しています。抽出スクリプトの実行には Python 3 と Pillow が必要です。PNGのalphaチャネルに埋め込まれたメタデータを優先し、見つからない場合はNovelAI由来のPNGテキストを読み取ります。
 
 `audio-generation` 配下の各パッケージは生成APIごとに独立しています。どちらもPython標準ライブラリのみで動作し、実際の生成にはそれぞれ `ELEVENLABS_API_KEY` / `STABILITY_API_KEY` 環境変数が必要です（OGG/WAV変換や音量確認にはFFmpegを使います）。生成は有料のため、スキルは必ずdry-runで見積もりを提示し、ユーザーの承認後にのみAPIを呼び出します。
+
+`image-generation/openai-compatible-api` は、OpenAI（gpt-image系）やLocalAIなど、`/v1/images/generations` と `/v1/images/edits` を持つOpenAI互換サーバーで使えます。APIキーは環境変数からのみ読み込みます（既定は `OPENAI_API_KEY`。`--api-key-env` で別の変数名を指定できます）。スキル内のファイルや `.env` には保存しません。接続先URLとモデルは、プロジェクト直下の `imagegen.config.json` に書きます（スキル同梱の `examples/imagegen.config.example.json` をコピーして使います）。このファイルにAPIキーは書かず、キーを入れた環境変数の名前を `api_key_env` に指定します。キーらしき項目を含む設定ファイルはエラーになります。優先順位は、コマンドライン > 設定ファイル > 環境変数（`OPENAI_BASE_URL` / `IMAGEGEN_MODEL`）> 既定値です。生成スクリプトはPython標準ライブラリのみで動作します。常にdry-runで内容を提示し、ユーザーの承認後に `--execute` を付けたときだけAPIを呼び出します。背景透過・ドット絵化・スプライトシートの作成と分割は、Pillowを使うローカル処理です（`uv run` で依存関係を自動導入します）。
 
 NovelAIパッケージには、性的描写を含む画像の制作ガイドラインと、該当する依頼でそのガイドラインを参照するInstructionを含めています。ガイドラインは`novelai-imagegen`スキルの参照資料として配布されます。Codexの`AGENTS.md`へInstructionを反映する場合は、NovelAIパッケージを導入した利用プロジェクトで`apm compile --target codex`を実行します。
 
