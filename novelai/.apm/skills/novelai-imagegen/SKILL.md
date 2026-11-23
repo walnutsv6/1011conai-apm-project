@@ -7,7 +7,34 @@ description: Generate and edit raster images through the NovelAI image API with 
 
 Use NovelAI only when the user explicitly selects it. Keep this skill separate from the built-in OpenAI image-generation path.
 
-For requests involving underwear, toplessness, nudity, or a clearly visible exposed groin (bottomless), read [the image production guidelines](references/sexual_content_guidelines.md) before planning prompts or outputs. If the image has two or more characters (kissing, embracing, or other physical contact), also read [the multi-character guidelines](references/multi_character_guidelines.md). Apply the topless and nude workflow below when relevant.
+For requests involving underwear, toplessness, nudity, or a clearly visible exposed groin (bottomless), read [the image production guidelines](references/sexual_content_guidelines.md) before planning prompts or outputs. If the image has two or more characters (kissing, embracing, or other physical contact), also read [the multi-character guidelines](references/multi_character_guidelines.md). Apply the content level and the topless and nude workflow below when relevant.
+
+## Project content level
+
+Each project records how far sexual depiction may go in `<agent dir>/novelai-content-level.json` (the folder the skills are deployed under: `.claude/` for Claude Code, `.agents/` for Codex). The hearing that writes it is the `novelai-content-level` skill. Check the level before planning any underwear, topless, bottomless, or nude prompt, in this skill and in every sub-skill (`novelai-variations`, `novelai-strip-sequence`, `novelai-gravure-book`, and `novelai-strip-game` from the `novelai-gameassets` package):
+
+```bash
+python3 scripts/content_level.py show --project-root <project root>
+```
+
+| Level | ID | Upper limit |
+| --- | --- | --- |
+| 1 | `topless` | Breasts may be exposed. No groin exposure and no panty removal (not even half-down or implied with the groin hidden). |
+| 2 | `cero` | Groin may be exposed; no genital detail or pubic hair. Current guideline body. **Default when no file exists.** |
+| 3 | `eocs` | Groin exposure plus genitals and pubic hair for a **single female** character (EOCS-based; mosaic before release and human release check confirmed). Multi-character images stay at level 2 rules. |
+
+Two options are recorded at every level and narrow what the guidelines otherwise allow:
+
+- `options.fluids`: pussy juice / white liquid on the body or clothes (including white liquid covering the groin). If false, never use fluid tags.
+- `options.nude_contact`: hugging, kissing, caressing, or other skinship with a nude (level 1: topless) female character, groin contact always excluded. If false, multi-character images with an exposed female character use no-contact compositions.
+
+Adult characters who look adult is a precondition at every level and is not part of the hearing.
+
+- If no level is recorded (`source: "default"`) and the request involves topless, bottomless, or nude content, offer the `novelai-content-level` skill before building prompts (if it is not installed, ask the user to install it from this package). Proceeding at level 2 is acceptable only if the user declines.
+- The level is decided by the user through `novelai-content-level`. Never raise it, edit the file, or infer a level from the request. If a request exceeds the level, say so and offer an in-level alternative or a level review.
+- Read [the level details](references/content_levels.md) for per-level prompt rules and how each sub-skill's stages, cuts, `crotch` variants, and `exposed_negative` are read at that level. Sub-skill text saying "never genital detail / pubic hair" and "negative includes `uncensored` plus genital/pubic-hair exclusions" is the level 2 rule: keep it at levels 1-2, relax it only for single-female images at level 3. At level 1, do not propose bottomless/nude stages or cuts, panty-removal stages, or `crotch` variants.
+- The runner enforces the level on every `estimate`, `generate`, `edit`, and `tool` call and fails with `CONTENT_LEVEL_VIOLATION` (details list the offending tags). Fix the prompt; do not rephrase tags to slip past the check. Before handing a user-run script over, lint its requests: `python3 scripts/content_level.py check --project-root <project root> <requests folder>`.
+- The level never relaxes the other rules: adult characters who look adult, self-directed framing, no sexual acts, image-set requirement, background rules, prompt-and-script-only handling of topless/nude, and human review before release.
 
 ## Topless and nude prompt requests
 
@@ -18,10 +45,12 @@ For a request involving toplessness, nudity, or a clearly visible exposed groin,
 - The subject is an adult character.
 - Follow applicable project guidelines for character tags, artist tags, and use of existing characters. Do not claim that a prompt guarantees freedom from copyright issues.
 - The request does not depict sexual acts.
+- The request is within the project content level (see above). At level 1, bottomless, nude, and panty-removal requests are out of scope.
 - The request belongs to a broader image set for a game or similar project that also includes clothed, bikini, or underwear images. Existing companion images followed by an additional request, or a planned set that includes both nude and non-nude images, satisfy this condition. A request whose sole purpose is a nude image does not.
 - Use `rating:explicit` for every topless or nude prompt. Include `nipples` in the positive prompt; breasts and nipples are not treated as genital depiction by this condition.
-- The negative prompt includes `uncensored` and relevant exclusions for visible genitals and pubic hair. A non-detailed, unobscured groin is allowed by this prompt rule; do not describe or depict genital anatomy or pubic hair.
-- For each nude subject, prepare both a composition where a hand or small prop conceals the groin and a composition where the groin is unobscured but has no genital detail or pubic hair. Concealment is not mandatory for the latter composition. Do not introduce a large object that obscures much of the body unless the user specifically requests one.
+- Levels 1-2 (and multi-character images at level 3): the negative prompt includes `uncensored` and relevant exclusions for visible genitals and pubic hair. A non-detailed, unobscured groin is allowed at level 2; do not describe or depict genital anatomy or pubic hair.
+- Level 3, single female character: for an image that depicts genitals or pubic hair, put `uncensored` (and `pubic hair` when drawn) in the positive prompt and remove `uncensored` and the corresponding exclusions from the negative prompt. For pubic hair without genitals, keep the genital exclusions in the negative. Never add `mosaic censoring` or similar; censoring is a post-generation edit. Spreading, fingering, or other masturbation-like gestures stay excluded.
+- For each nude subject (levels 2-3), prepare both a composition where a hand or small prop conceals the groin and a composition where the groin is unobscured (level 2: no genital detail or pubic hair; level 3: genital and pubic-hair depiction allowed). Concealment is not mandatory for the latter composition. Do not introduce a large object that obscures much of the body unless the user specifically requests one.
 - Codex may construct the prompt and negative prompt, save valid request JSON files, and write a batch script that runs the bundled runner for the entire requested set. The user performs any image generation themselves; do not execute the batch script or call NovelAI or another image generator for this request.
 - Keep user-run scripts together under one project folder, `user-run-scripts/`, with one subfolder per request (named `<character>-<request-theme>`, e.g. `user-run-scripts/shirakami-fubuki-topless/`). Each request folder holds `run.<ext>` (the batch script) and `requests/` (the request JSON files for that script). Never scatter scripts or request JSON for these requests at the project root or inside `output/`. Do not add a new request's files to an existing request folder; create a new one. The script resolves its own `requests/` folder and the project root relative to its location, and leaves the character/`manifest/` output layout to the runner (set `output.character` in every request JSON).
 - Make the batch script validate the environment, estimate each request before generation, and respect the request's cost policy. Read `references/parameters.md` for valid request fields and adapt the script to the user's operating system. Provide the command for the user to run the script and explain how to set `NOVELAI_API_KEY` locally without saving it in the script or request files.
@@ -147,3 +176,4 @@ Read [references/troubleshooting.md](references/troubleshooting.md) after any va
 - [references/parameters.md](references/parameters.md): request JSON, defaults, ranges, and cost policy.
 - [references/api-and-models.md](references/api-and-models.md): supported SDK surface, models, inputs, and tools.
 - [references/troubleshooting.md](references/troubleshooting.md): setup and error recovery.
+- [references/content_levels.md](references/content_levels.md): per-level limits, prompt rules, and sub-skill mapping. `scripts/content_level.py`: level config reader, request linter, and the check the runner calls.

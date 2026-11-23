@@ -8,7 +8,7 @@
 | `audio-generation/stable-audio-api` | Stable Audio 3.0 APIでゲーム用BGM・効果音を生成する `stable-audio-generation` |
 | `development` | 共通の開発方針、実装レビュー担当、`issue-implementation` |
 | `game-audio` | `gb-audio-to-pyxres`、`pyxel-bgm-player` |
-| `novelai` | `novelai-imagegen`、`novelai-variations`、`novelai-strip-sequence`、`novelai-gravure-book` |
+| `novelai` | `novelai-imagegen`、`novelai-variations`、`novelai-strip-sequence`、`novelai-gravure-book`、`novelai-content-level` |
 | `novelai-gameassets` | NovelAIでゲームアセットを作る補助パッケージ。脱衣ゲーム（野球拳・脱衣麻雀・クイズ）の立ち絵・途中段階・カットイン・一枚絵を作る `novelai-strip-game`（`novelai` パッケージに依存） |
 | `novelai-metadata` | 既存のNovelAI PNG画像から生成メタデータをJSONへ抽出する `novelai-metadata` |
 | `tetris` | `tetris-spec-interviewer` |
@@ -33,7 +33,7 @@ apm install walnutsv6/1011conai-apm-project/game-audio --skill pyxel-bgm-player 
 apm install walnutsv6/1011conai-apm-project/novelai --skill novelai-imagegen --target codex
 ```
 
-`novelai-variations`、`novelai-strip-sequence`、`novelai-gravure-book` は `novelai-imagegen` の手順とスクリプトを使います。これらを選ぶ場合は `novelai-imagegen` も導入してください。
+`novelai-variations`、`novelai-strip-sequence`、`novelai-gravure-book`、`novelai-content-level` は `novelai-imagegen` の手順とスクリプトを使います。これらを選ぶ場合は `novelai-imagegen` も導入してください。
 
 `novelai-gameassets` は `novelai` パッケージの補助パッケージです。`apm.yml` で `novelai` に依存しているため、導入すると `novelai` も一緒に入ります。`novelai-strip-game` は `novelai-imagegen` のランナーと `novelai-strip-sequence` のスクリプトを呼び出し、性的描写のガイドラインも `novelai-imagegen` のものを使います。そのため、`novelai` 側を `--skill` で絞る場合も、この2つは必ず導入してください。inpaint方式の背景透過には、`uv` で `rembg` を実行します（初回はモデルをダウンロードします）。
 
@@ -49,6 +49,20 @@ NovelAIパッケージには、性的描写を含む画像の制作ガイドラ�
 
 ```bash
 apm install walnutsv6/1011conai-apm-project/novelai --skill novelai-imagegen --skill novelai-variations --target codex
+```
+
+性的描写をどこまで許可するかは、利用プロジェクトごとに「表現レベル」として設定します。`novelai-content-level` スキルがユーザーにヒアリングし、結果をスキルの配置先（Claude Codeは `.claude/`、Codexは `.agents/`）の `novelai-content-level.json` に記録します。
+
+| レベル | 許可する上限 |
+| --- | --- |
+| 1 | 乳房の露出まで。股間の露出（パンティーの脱衣）は不可 |
+| 2 | 股間の露出まで。性器・陰毛の描写は不可（CERO基準。未設定時の既定値） |
+| 3 | 股間の露出、および単独女性キャラクターの性器・陰毛の描写（EOCS基準。公開前のモザイク修正が前提） |
+
+あわせて、愛液・白い液体の表現と、全裸（レベル1ではトップレス）の女性キャラクターへの抱擁・スキンシップ（股間への接触は除く）を許可するかを、レベルにかかわらずオプションとして記録します。登場キャラクターが全員成人で成人に見えることは、設定にかかわらず常に前提です。`novelai-imagegen` のランナーは、記録されたレベルとオプションを超えるプロンプトを拒否します。派生スキル（`novelai-gameassets` の `novelai-strip-game` を含む）も、同じ記録に従ってステージやカットを提案します。
+
+```bash
+apm install walnutsv6/1011conai-apm-project/novelai --skill novelai-imagegen --skill novelai-content-level --target claude
 ```
 
 手元の未公開の変更を試す場合は、**このリポジトリの外**に利用プロジェクトを用意し、ローカルパスでカテゴリを指定します。例: `apm install /path/to/repo/tetris --target codex`。APMはスキルを `.agents/skills/` に配置します。

@@ -62,6 +62,7 @@ In the commands below, replace `<skills-root>` with the installed skills directo
 
 ## Fixed conventions (technical, theme-independent)
 
+- Project content level: before proposing underwear, topless or other exposed outfits, run `python3 ../novelai-imagegen/scripts/content_level.py show --project-root <project root>` and follow [the level details](../novelai-imagegen/references/content_levels.md) (level 1: up to topless; no panty removal, bottomless or nude). If no level is recorded, offer the `novelai-content-level` hearing. The runner rejects requests beyond the level and the options `fluids` / `nude_contact`.
 - Model `nai-diffusion-5-full`, 832×1216 portrait, steps 28, scale 5.0, samples 1.
 - Seed fixed **per character**, shared by all of that character's images (identity stays stable across outfits/poses).
 - Subjects are always adults: keep `mature female, adult woman, 20s, tall` in the base tags and `child, loli, petite, flat chest` in the negative. Do not remove them.

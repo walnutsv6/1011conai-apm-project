@@ -23,6 +23,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import content_level  # noqa: E402 - sibling module, project content level checks
+
 SCHEMA_VERSION = 1
 MANIFEST_DIRNAME = "manifest"
 ZERO_MAX_PIXELS = 1_048_576
@@ -420,10 +423,19 @@ def generation_kwargs(data: dict[str, Any], root: Path, samples: int) -> dict[st
     return kwargs
 
 
+def project_content_level(request: dict[str, Any], root: Path) -> dict[str, Any]:
+    """Reject prompts beyond the project's content level (<agent dir>/novelai-content-level.json)."""
+    try:
+        return content_level.enforce(request, root)
+    except content_level.ContentLevelError as exc:
+        raise RunnerError(exc.code, exc.message, details=exc.details) from exc
+
+
 def generation_plan(
     request: dict[str, Any], root: Path, is_opus: bool
 ) -> tuple[dict[str, Any], list[Any], list[int]]:
     data, module = normalized_generation(request), sdk()
+    data["content_level"] = project_content_level(request, root)
     one = module["GenerateImageParams"](**generation_kwargs(data, root, 1))
     split = (
         data["samples"] > 1
@@ -666,6 +678,7 @@ def build_tool(
     request: dict[str, Any], root: Path, module: dict[str, Any]
 ) -> tuple[str, Any, list[str]]:
     name = request.get("tool")
+    project_content_level(request, root)
     image = input_path(request.get("input"), root, "input")
     if name == "line_art":
         return name, module["LineArtParams"](image=image), ["lineart"]
@@ -779,6 +792,10 @@ def validate_environment(live: bool) -> dict[str, Any]:
         "api_key_configured": bool(os.environ.get("NOVELAI_API_KEY")),
         "live": live,
     }
+    try:
+        result["content_level"] = content_level.summary(content_level.load_config(Path.cwd()))
+    except content_level.ContentLevelError as exc:
+        raise RunnerError(exc.code, exc.message) from exc
     if live:
         if not os.environ.get("NOVELAI_API_KEY"):
             raise RunnerError("MISSING_API_KEY", "NOVELAI_API_KEY is not set.")
