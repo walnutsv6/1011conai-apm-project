@@ -55,3 +55,9 @@ Read the SDK validation error and compare the request with [parameters.md](param
 ## Output inspection failure
 
 Keep generated files and metadata. Report which invariant could not be checked. For transparent output, inspect the alpha channel; for exact text, zoom in and verify every character.
+
+## Content level violation
+
+`CONTENT_LEVEL_VIOLATION` means the prompt exceeds the project level in `<agent dir>/novelai-content-level.json` (default level 2 when the file is missing). `details.violations` lists each rule and the offending tags. Remove or replace those tags, or add the missing negative exclusions (`required_negative`). Rules `fluids` and `nude_contact` come from project options, not the level. Do not rephrase tags to bypass the check. If the user wants a different level or option, run the `novelai-content-level` skill; never edit the file directly.
+
+`INVALID_CONTENT_LEVEL` means the config file is malformed, or level 3 lacks confirmed `eocs_premises`. Re-run the `novelai-content-level` skill.
