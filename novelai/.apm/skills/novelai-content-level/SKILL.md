@@ -1,6 +1,6 @@
 ---
 name: novelai-content-level
-description: Ask the user which sexual-content level a project allows for NovelAI images (level 1 breasts only / level 2 groin exposure without genitals, current CERO-based / level 3 genitals and pubic hair, EOCS-based) plus two options asked at every level (fluids; hugging/skinship with an exposed female character), record the decision in <agent dir>/novelai-content-level.json, and explain what it changes in novelai-imagegen and its sub-skills (novelai-variations, novelai-strip-sequence, novelai-gravure-book, novelai-strip-game). Requires novelai-imagegen. Use when the user asks to set, change, or check the project's content level / 表現レベル / 性的描写の許可範囲, when starting topless/nude work in a project with no recorded level, or when a runner request fails with CONTENT_LEVEL_VIOLATION and the user wants a different level.
+description: Ask the user which sexual-content level a project allows for NovelAI images (level 1 breasts only / level 2 groin exposure without genitals, current CERO-based / level 3 genitals and pubic hair, EOCS-based) plus two options asked at every level (fluids; hugging/skinship with an exposed female character) and two level-3-only options (POV mutual-nude embrace; implied ejaculation during it and its aftermath), record the decision in <agent dir>/novelai-content-level.json, and explain what it changes in novelai-imagegen and its sub-skills (novelai-variations, novelai-strip-sequence, novelai-gravure-book, novelai-strip-game). Requires novelai-imagegen. Use when the user asks to set, change, or check the project's content level / 表現レベル / 性的描写の許可範囲, when starting topless/nude work in a project with no recorded level, or when a runner request fails with CONTENT_LEVEL_VIOLATION and the user wants a different level.
 ---
 
 # NovelAI 表現レベルのヒアリング
@@ -15,6 +15,13 @@ description: Ask the user which sexual-content level a project allows for NovelA
 | 露出した女性キャラクターへのスキンシップ | `nude_contact` | 全裸（レベル1ではトップレス）の女性キャラクターへの抱擁・キス・愛撫等のスキンシップ。股間への接触は、オプションにかかわらず含めない |
 
 オプションは、ガイドラインで許容されている範囲をさらに絞るためのものであり、ガイドラインの「含めない」を許可するものではない（例: 双方が全裸の抱擁、股間への接触、性行為は、許可しても含めない）。
+
+レベル3で `nude_contact` を許可した場合だけ、抱擁・スキンシップの追加オプションとして次の2つを確認する。ガイドラインの「主観視点での全裸の抱擁・射精の示唆（オプション）」が、これを許可した場合に限って双方全裸の抱擁の禁止に例外を設けている。
+
+| オプション | キー | 内容 | 前提 |
+| --- | --- | --- | --- |
+| 主観視点での双方全裸の抱擁 | `nude_embrace` | 主人公（男性）の主観視点で、全裸の女性キャラクター1人を全裸で抱擁する画像。男性は腕・手まで（胴体・性器は描かない）。挿入は示唆も含めて描かない | `nude_contact` |
+| 射精の示唆・事後表現 | `embrace_ejaculation` | 上記の抱擁の中での無意識的な自然射精の示唆と、抱擁後に股間・内腿（下着等の上を含む）に精液が付着した女性キャラクター。射精の瞬間・性器、性行為による射精、性器の内側から溢れる表現は含めない | `nude_embrace`、`fluids` |
 
 登場キャラクターが全員18歳以上で、見た目の印象も成人であることは、レベルにかかわらず常に適用する前提である。ヒアリングで確認する項目ではなく、確認の結果によって緩めることもない。
 
@@ -51,14 +58,20 @@ description: Ask the user which sexual-content level a project allows for NovelA
    - 性器が描写された画像は、公開・配布の前にモザイク修正を施す（生成は無修正で行う）。
    - 公開・配布前の確認は、AIではなく人間（公開・配布の責任者）が行う。
 
+   前提を両方確認でき、手順2で `nude_contact` が「許可する」だった場合は、続けて `AskUserQuestion` で次を聞く（推奨は付けない）。前提を満たさない質問は出さず「許可しない」として記録する。
+
+   - **主観視点での双方全裸の抱擁**（`nude_embrace`）: 許可する／許可しない。説明に「男性の主観視点で女性1人のみを描く。男性は腕・手まで、胴体・性器は描かない。挿入は示唆も含めて描かない」と書く。
+   - **射精の示唆・事後表現**（`embrace_ejaculation`）: `fluids` も「許可する」の場合だけ聞く。許可する／許可しない。説明に「全裸の抱擁の中での無意識的な自然射精の示唆と、抱擁後の股間・内腿への精液の付着。`nude_embrace` を許可しない場合は記録できない」と書く。
+
 4. 決定を記録する。
 
    ```bash
    python3 ../novelai-imagegen/scripts/content_level.py set --project-root <project root> \
-     --level <1|2|3> --fluids <yes|no> --nude-contact <yes|no> [--confirm-eocs] [--notes "<補足>"]
+     --level <1|2|3> --fluids <yes|no> --nude-contact <yes|no> [--confirm-eocs] \
+     [--nude-embrace <yes|no>] [--embrace-ejaculation <yes|no>] [--notes "<補足>"]
    ```
 
-   `--fluids` と `--nude-contact` は必須で、ヒアリングの回答をそのまま渡す。`--confirm-eocs` は手順3でユーザーが前提を両方確認した場合にだけ付ける。付けずにレベル3を指定するとスクリプトは記録を拒否する。
+   `--fluids` と `--nude-contact` は必須で、ヒアリングの回答をそのまま渡す。`--nude-embrace` と `--embrace-ejaculation` は手順3で聞いた場合だけ回答を渡す（省略時は `no`）。レベル3以外や、前提のオプションが `no` の状態で `yes` を渡すと、スクリプトは記録を拒否する。`--confirm-eocs` は手順3でユーザーが前提を両方確認した場合にだけ付ける。付けずにレベル3を指定するとスクリプトは記録を拒否する。
 
 5. 既存のリクエストを確認する。レベルを下げた場合は特に、既存のリクエストJSONが新しいレベルを超えていないかを確認する。
 

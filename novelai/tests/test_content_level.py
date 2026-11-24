@@ -134,7 +134,7 @@ def test_set_and_load_roundtrip(tmp_path):
     assert cl.main(["set", "--project-root", str(tmp_path), "--level", "1", *OPTS]) == 0
     data = json.loads((tmp_path / cl.CONFIG_RELPATH).read_text(encoding="utf-8"))
     assert data["level"] == 1 and "project" not in data
-    assert data["options"] == {"fluids": False, "nude_contact": True}
+    assert data["options"] == {"fluids": False, "nude_contact": True, "nude_embrace": False, "embrace_ejaculation": False}
     assert cl.load_config(tmp_path)["level"] == 1
 
 
@@ -172,3 +172,113 @@ def test_config_found_in_agents_dir(tmp_path):
     )
     loaded = cl.load_config(tmp_path)
     assert loaded["level"] == 1 and loaded["path"].endswith(".agents/" + cl.CONFIG_FILENAME)
+
+
+# --- level 3 options: nude_embrace / embrace_ejaculation --------------------
+
+def cfg3(**options) -> dict:
+    base = cfg(3)
+    base["options"].update({"nude_embrace": False, "embrace_ejaculation": False, **options})
+    return base
+
+
+def rules3(prompt: str, negative: str = NEG_SAFE, **options) -> set[str]:
+    return {v["rule"] for v in cl.check_prompt(prompt, negative, cfg3(**options))}
+
+
+POV_EMBRACE = "1girl, pov, pov hands, hug, completely nude, nipples, rating:explicit"
+EJAC_ON = {"nude_embrace": True, "embrace_ejaculation": True}
+
+
+def test_pov_contact_counts_as_partner_for_nude_contact():
+    assert "nude_contact" in rules(POV_EMBRACE, NEG_SAFE, 2, nude_contact=False)
+    assert "nude_contact" not in rules(POV_EMBRACE, NEG_SAFE, 2, nude_contact=True)
+
+
+def test_pov_contact_without_nude_embrace_gets_no_genital_allowance():
+    assert "multi_character_genital" in rules3(f"{POV_EMBRACE}, pubic hair, uncensored", "")
+    assert "required_negative" in rules3(POV_EMBRACE, "bad anatomy")
+
+
+def test_nude_embrace_allows_genitals_in_pov_embrace():
+    prompt = f"{POV_EMBRACE}, pubic hair, pussy, uncensored"
+    assert rules3(prompt, "bad anatomy, 1boy, penis", nude_embrace=True) == set()
+
+
+def test_nude_embrace_genital_allowance_is_pov_only():
+    prompt = "1girl, 1boy, hug, completely nude, pubic hair"
+    assert "multi_character_genital" in rules3(prompt, nude_embrace=True)
+
+
+def test_semen_in_pov_embrace_requires_option():
+    prompt = f"{POV_EMBRACE}, cum on thighs"
+    assert "embrace_ejaculation" in rules3(prompt)
+    assert rules3(prompt, **EJAC_ON) == set()
+
+
+@pytest.mark.parametrize("tag", ["cum on face", "cum on breasts", "cum on pussy", "bukkake", "facial"])
+def test_embrace_ejaculation_does_not_check_placement(tag):
+    assert rules3(f"{POV_EMBRACE}, {tag}", **EJAC_ON) == set()
+
+
+def test_embrace_ejaculation_is_pov_only():
+    prompt = "1girl, 1boy, hug, completely nude, cum on thighs"
+    assert "embrace_ejaculation" in rules3(prompt, **EJAC_ON)
+
+
+@pytest.mark.parametrize("level", [2, 3])
+def test_semen_with_drawn_partner_rejected_below_option(level):
+    assert "embrace_ejaculation" in rules("1girl, 1boy, hug, completely nude, cum on thighs", NEG_SAFE, level)
+
+
+def test_solo_aftermath_follows_fluids_only():
+    prompt = "1girl, solo, completely nude, cum on thighs, blush, half-closed eyes"
+    assert rules3(prompt) == set()
+
+
+@pytest.mark.parametrize(
+    "tag", ["cumdrip", "cum drip", "cum in pussy", "creampie", "thigh sex", "sumata", "grinding", "ejaculation", "sex"]
+)
+def test_acts_and_internal_semen_stay_banned_with_options(tag):
+    assert "always_banned" in rules3(f"{POV_EMBRACE}, {tag}", **EJAC_ON)
+
+
+@pytest.mark.parametrize("prompt", [f"{POV_EMBRACE}, penis", "1girl, 1boy, completely nude, penis", "hetero, nude, testicles"])
+def test_penis_never_with_female_character(prompt):
+    assert "male_genital" in rules3(prompt, **EJAC_ON)
+
+
+def test_male_solo_penis_still_allowed():
+    assert "male_genital" not in rules("1boy, solo, male focus, completely nude, penis, uncensored", "pussy, pubic hair", 2)
+
+
+LEVEL3_OPTS = ["--fluids", "yes", "--nude-contact", "yes", "--confirm-eocs"]
+
+
+def test_set_level3_options_roundtrip(tmp_path):
+    args = ["set", "--project-root", str(tmp_path), "--level", "3", *LEVEL3_OPTS]
+    assert cl.main([*args, "--nude-embrace", "yes", "--embrace-ejaculation", "yes"]) == 0
+    loaded = cl.load_config(tmp_path)
+    assert loaded["options"]["nude_embrace"] and loaded["options"]["embrace_ejaculation"]
+    assert cl.summary(loaded)["embrace_ejaculation"] is True
+
+
+@pytest.mark.parametrize(
+    "argv",
+    [
+        ["--level", "2", "--fluids", "yes", "--nude-contact", "yes", "--nude-embrace", "yes"],
+        ["--level", "3", "--fluids", "yes", "--nude-contact", "no", "--confirm-eocs", "--nude-embrace", "yes"],
+        ["--level", "3", *LEVEL3_OPTS, "--embrace-ejaculation", "yes"],
+        ["--level", "3", "--fluids", "no", "--nude-contact", "yes", "--confirm-eocs",
+         "--nude-embrace", "yes", "--embrace-ejaculation", "yes"],
+    ],
+)
+def test_level3_options_require_level_and_dependencies(tmp_path, argv):
+    assert cl.main(["set", "--project-root", str(tmp_path), *argv]) == 2
+    assert not (tmp_path / cl.CONFIG_RELPATH).exists()
+
+
+def test_level3_options_default_false(tmp_path):
+    assert cl.main(["set", "--project-root", str(tmp_path), "--level", "3", *LEVEL3_OPTS]) == 0
+    options = cl.load_config(tmp_path)["options"]
+    assert options["nude_embrace"] is False and options["embrace_ejaculation"] is False

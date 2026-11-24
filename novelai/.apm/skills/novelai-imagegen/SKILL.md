@@ -26,7 +26,12 @@ python3 scripts/content_level.py show --project-root <project root>
 Two options are recorded at every level and narrow what the guidelines otherwise allow:
 
 - `options.fluids`: pussy juice / white liquid on the body or clothes (including white liquid covering the groin). If false, never use fluid tags.
-- `options.nude_contact`: hugging, kissing, caressing, or other skinship with a nude (level 1: topless) female character, groin contact always excluded. If false, multi-character images with an exposed female character use no-contact compositions.
+- `options.nude_contact`: hugging, kissing, caressing, or other skinship with a nude (level 1: topless) female character, groin contact always excluded. If false, multi-character images with an exposed female character (including POV images touching her) use no-contact compositions.
+
+Two more options exist only at level 3 (default false) and extend `nude_contact`. Follow the guideline section 「主観視点での全裸の抱擁・射精の示唆（オプション）」 for both:
+
+- `options.nude_embrace`: a mutual-nude embrace drawn from the man's POV. One adult female character only; the man appears as arms/hands at most, never his torso or genitals; no penetration, not even implied. With this option a POV image (no `1boy` etc.) gets the level 3 single-female genital allowance, during and after the embrace (mosaic before release).
+- `options.embrace_ejaculation` (requires `nude_embrace` and `fluids`): implied involuntary ejaculation during that embrace and the aftermath, semen on her groin / inner thighs (also over underwear). Never the act, the moment, the penis, ejaculation from any sexual act, or semen coming from inside her (`cumdrip` is rejected). The runner does not check where the semen is.
 
 Adult characters who look adult is a precondition at every level and is not part of the hearing.
 
