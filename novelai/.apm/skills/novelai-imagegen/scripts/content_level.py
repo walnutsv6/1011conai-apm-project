@@ -4,7 +4,8 @@
 Standard library only. Imported by ``novelai_image.py`` and usable as a CLI:
 
     python3 content_level.py show  [--project-root DIR]
-    python3 content_level.py set   --level 1|2|3 --fluids yes|no --nude-contact yes|no [options]
+    python3 content_level.py set   --level 1|2|3 --fluids yes|no --nude-contact yes|no
+                                   [--nude-embrace yes|no] [--embrace-ejaculation yes|no] [options]
     python3 content_level.py check [--project-root DIR] PATH [PATH ...]
 
 The decision is stored per project in ``<agent dir>/novelai-content-level.json``,
@@ -26,6 +27,17 @@ Options asked at every level:
 - ``nude_contact`` -- hugging / skinship with an exposed (level 1: topless,
                       levels 2-3: also nude) female character, excluding any
                       contact with the groin.
+
+Level 3 only options (asked only when level 3 and nude_contact are chosen):
+
+- ``nude_embrace``        -- both partners nude in an embrace, drawn only from
+                             the man's point of view (POV): one female
+                             character, the man's arms at most, never his
+                             torso or genitals. No penetration.
+- ``embrace_ejaculation`` -- implied involuntary ejaculation during that
+                             embrace and its aftermath (semen on the
+                             groin / inner thighs, also over underwear).
+                             Requires ``nude_embrace`` and ``fluids``.
 
 Adulthood (every character is 18+ and looks adult) is a precondition of all
 sexual content at every level, not an option.
@@ -72,6 +84,13 @@ DEFAULT_LEVEL = 2
 # Options asked in the hearing at every level. When a recorded config lacks a
 # key, levels 2-3 default to True (the guideline body) and level 1 to False.
 OPTION_KEYS = ("fluids", "nude_contact")
+# Level 3 only options. Missing keys default to False at every level.
+# Each maps to the options it requires.
+LEVEL3_OPTION_KEYS: dict[str, tuple[str, ...]] = {
+    "nude_embrace": ("nude_contact",),
+    "embrace_ejaculation": ("nude_embrace", "fluids"),
+}
+ALL_OPTION_KEYS = OPTION_KEYS + tuple(LEVEL3_OPTION_KEYS)
 # Level 3 premises confirmed in the hearing. Adulthood is not listed here: it
 # is a precondition at every level. An actual EOCS review is not required.
 EOCS_PREMISES = ("mosaic_before_release", "human_release_check")
@@ -190,7 +209,13 @@ ALWAYS_BANNED = [
     r"(dildo|vibrator|sex toy)",
     r"cum (in|inside) (pussy|ass|mouth)",
     r"creampie",
+    r"cum ?drip",
     r"ejaculation",
+    r"(thigh|intercrural) sex",
+    r"intercrural",
+    r"sumata",
+    r"(grinding|frottage|dry humping)",
+    r"penis (on|between|against|rubbing) [a-z ]+",
     r"(rape|molestation|non-consensual|sexual assault)",
     r"(peeing|pee|urination|scat|defecation)",
 ]
@@ -234,6 +259,22 @@ CONTACT = [
     r"face sitting|sitting on face",
     r"breast press|breasts? against [a-z ]+",
 ]
+
+# Point-of-view tags. With a CONTACT tag they mean a partner (the viewer) is
+# touching the character, even without 1boy.
+POV = [r"pov", r"pov (hands|arms|hug|embrace|crotch)", r"first-person view"]
+
+# Explicit semen (white liquid is deliberately not included). With a partner in
+# contact and an exposed character it implies ejaculation, which is allowed
+# only through options.embrace_ejaculation and POV only. Placement is not
+# checked here (the guideline governs it); cumdrip is in ALWAYS_BANNED.
+SEMEN = [r"cum( on [a-z ]+)?", r"semen( on [a-z ]+)?", r"bukkake", r"facial"]
+
+# An exposed penis / testicles. Allowed only for a male character alone
+# (multi-character guideline); never with a female character or in a POV
+# contact image.
+MALE_GENITAL = [r"penis(es)?", r"(large|huge|small|veiny) penis", r"testicles", r"erect penis"]
+FEMALE_PRESENT = [r"(1|one) ?girl", r"[2-9]\+?girls", r"multiple girls", r"yuri", r"hetero"]
 
 # Subject-count tags that make the image multi-character (level 3 genital
 # allowance applies only to a single female character).
@@ -296,6 +337,19 @@ def _validate(data: Any, path: Path) -> dict[str, Any]:
         if not isinstance(value, bool):
             raise ContentLevelError("INVALID_CONTENT_LEVEL", f"{path}: options.{key} must be a boolean.")
         resolved_options[key] = value
+    for key, requires in LEVEL3_OPTION_KEYS.items():
+        value = options.get(key, False)
+        if not isinstance(value, bool):
+            raise ContentLevelError("INVALID_CONTENT_LEVEL", f"{path}: options.{key} must be a boolean.")
+        if value and level != 3:
+            raise ContentLevelError("INVALID_CONTENT_LEVEL", f"{path}: options.{key} is allowed only at level 3.")
+        missing_opts = [name for name in requires if not resolved_options.get(name)]
+        if value and missing_opts:
+            raise ContentLevelError(
+                "INVALID_CONTENT_LEVEL",
+                f"{path}: options.{key} requires options {', '.join(missing_opts)}.",
+            )
+        resolved_options[key] = value
     if level == 3:
         premises = data.get("eocs_premises", {})
         missing = [
@@ -321,7 +375,7 @@ def load_config(root: Path | None = None) -> dict[str, Any]:
         return {
             "level": DEFAULT_LEVEL,
             "level_id": LEVELS[DEFAULT_LEVEL]["id"],
-            "options": {key: True for key in OPTION_KEYS},
+            "options": {**{key: True for key in OPTION_KEYS}, **{key: False for key in LEVEL3_OPTION_KEYS}},
             "source": "default",
             "path": str(path),
         }
@@ -340,6 +394,7 @@ def summary(config: dict[str, Any]) -> dict[str, Any]:
         "level_id": config["level_id"],
         "fluids": config["options"]["fluids"],
         "nude_contact": config["options"]["nude_contact"],
+        **{key: config["options"].get(key, False) for key in LEVEL3_OPTION_KEYS},
         "source": config.get("source", "config"),
         "project": config.get("project"),
     }
@@ -355,6 +410,8 @@ def check_prompt(prompt: str | None, negative: str | None, config: dict[str, Any
     level = config["level"]
     fluids_ok = config["options"]["fluids"]
     contact_ok = config["options"]["nude_contact"]
+    embrace_ok = level == 3 and config["options"].get("nude_embrace", False)
+    ejaculation_ok = level == 3 and config["options"].get("embrace_ejaculation", False)
     positive = tags(prompt)
     neg = tags(negative)
     violations: list[dict[str, Any]] = []
@@ -368,6 +425,11 @@ def check_prompt(prompt: str | None, negative: str | None, config: dict[str, Any
     genital = _matches(positive, GENITAL_DETAIL)
     fluid = _matches(positive, FLUIDS)
     multi = _matches(positive, MULTI_CHARACTER)
+    contact = _matches(positive, CONTACT)
+    pov_partner = bool(_matches(positive, POV) and contact)
+    # Another person is in the image or touching the character from the POV.
+    partner = bool(multi) or pov_partner
+    exposed = breast or groin
     sexual = bool(breast or groin or genital or fluid)
 
     add("always_banned", _matches(positive, ALWAYS_BANNED), "性行為・自慰を想起させる動作・強要・排泄はどのレベルでも含めない。")
@@ -379,17 +441,36 @@ def check_prompt(prompt: str | None, negative: str | None, config: dict[str, Any
         add("level1_groin", groin, "レベル1では股間の露出・パンティーの脱衣は不可。")
     if not fluids_ok:
         add("fluids", fluid, "このプロジェクトでは愛液・白い液体の表現は許可されていない（オプション fluids）。")
-    if not contact_ok and multi and (breast or groin):
+    if not contact_ok and partner and exposed:
         add(
             "nude_contact",
-            _matches(positive, CONTACT),
+            contact,
             "このプロジェクトでは露出した女性キャラクターへの抱擁・スキンシップは許可されていない（オプション nude_contact）。",
         )
 
-    genital_allowed = level >= 3 and not multi
+    female = bool(_matches(positive, FEMALE_PRESENT)) or pov_partner
+    if female and (exposed or genital):
+        add(
+            "male_genital",
+            _matches(positive, MALE_GENITAL),
+            "露出した陰茎は男性キャラクター単体の画像に限る。女性キャラクターや主観視点の接触と同じ画像には描写しない。",
+        )
+
+    semen = _matches(positive, SEMEN)
+    if partner and exposed and semen:
+        add(
+            "embrace_ejaculation",
+            semen if not (ejaculation_ok and not multi) else [],
+            "接触のある画像の精液は、レベル3でオプション embrace_ejaculation を許可し、主観視点（男性を人物として描かない）"
+            "で描く場合に限る。",
+        )
+
+    # Level 3 genital allowance: a single female character, or with
+    # options.nude_embrace also a POV embrace (no drawn partner).
+    genital_allowed = level >= 3 and (not partner or (embrace_ok and not multi))
     if not genital_allowed:
-        if level >= 3 and multi:
-            message = "複数キャラクターの画像には性器・陰毛の描写（レベル3の許容）を適用しない。"
+        if level >= 3 and partner:
+            message = "複数キャラクター・主観視点の接触がある画像には性器・陰毛の描写（レベル3の許容）を適用しない。"
             rule = "multi_character_genital"
         else:
             message = f"レベル{level}では性器・陰毛の描写（positive の uncensored を含む）は不可。"
@@ -400,8 +481,7 @@ def check_prompt(prompt: str | None, negative: str | None, config: dict[str, Any
         found = [t for t in genital if not (t == "uncensored" and has_boy)]
         add(rule, found, message)
 
-        exposed = breast or groin
-        if exposed and not genital_allowed:
+        if exposed:
             missing = []
             if "uncensored" not in neg and not has_boy:
                 missing.append("uncensored")
@@ -491,7 +571,12 @@ def _cmd_set(args: argparse.Namespace) -> int:
         "level": level,
         "level_id": LEVELS[level]["id"],
         "label": LEVELS[level]["label"],
-        "options": {"fluids": args.fluids == "yes", "nude_contact": args.nude_contact == "yes"},
+        "options": {
+            "fluids": args.fluids == "yes",
+            "nude_contact": args.nude_contact == "yes",
+            "nude_embrace": args.nude_embrace == "yes",
+            "embrace_ejaculation": args.embrace_ejaculation == "yes",
+        },
         "decided_at": args.date or date.today().isoformat(),
         "decided_by": "user (novelai-content-level hearing)",
     }
@@ -550,6 +635,14 @@ def main(argv: list[str] | None = None) -> int:
     setp.add_argument(
         "--nude-contact", required=True, choices=["yes", "no"],
         help="露出した女性キャラクターへの抱擁・スキンシップ（股間への接触は除く）",
+    )
+    setp.add_argument(
+        "--nude-embrace", default="no", choices=["yes", "no"],
+        help="level 3 only: 主観視点での双方全裸の抱擁（requires --nude-contact yes）",
+    )
+    setp.add_argument(
+        "--embrace-ejaculation", default="no", choices=["yes", "no"],
+        help="level 3 only: 抱擁中の射精の示唆・事後表現（requires --nude-embrace yes and --fluids yes）",
     )
     setp.add_argument(
         "--confirm-eocs", action="store_true",
