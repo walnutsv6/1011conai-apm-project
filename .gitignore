@@ -218,3 +218,25 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# macOS
+#   macOS 標準テンプレート
+#   https://github.com/github/gitignore/blob/main/Global/macOS.gitignore
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# macOS がリモートの AFP/SMB 共有上に作成するディレクトリ
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
